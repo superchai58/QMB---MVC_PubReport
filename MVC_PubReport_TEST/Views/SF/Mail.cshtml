@@ -1,0 +1,408 @@
+﻿@{
+    ViewBag.Title = "Mail";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+
+    var QueryStr = request.Url.Query;
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }
+   
+}
+ 
+ 
+ 
+<script>
+    $(document).ready(function () {
+ 
+
+        var $btnRest = $('#rest');
+        var $btnSave = $('#save');
+        var $btnToExcel = $('#ToExcel');
+        var $btnDelete = $('#delete');
+        var $btnQuery = $('#Query');
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+        var $tbResultTable = $('#ResultTable');
+        var $ModalDoing = $('#doing');
+
+        var $txtSystemName = $('#SystemName');
+        var $txtRMailAccount = $('#RMailAccount');
+        var $txtCMailAccount = $('#CMailAccount');
+
+        var SystemNameQuery = getQueryString("SystemName");
+        $txtSystemName.val(SystemNameQuery);
+      
+        if (SystemNameQuery != "" && SystemNameQuery != null)
+        {
+           
+            $txtSystemName.attr("disabled", "disabled");
+        }
+
+        $btnRest.click(function () {
+            $txtSystemName.val("");
+            $txtRMailAccount.val("");
+            $txtCMailAccount.val("");            
+            $tbResultTable.bootstrapTable('removeAll');
+        });
+         
+ 
+        
+        $btnToExcel.click(function () {
+
+            $tbResultTable.tableExport({
+                type: 'excel',
+                escape: 'false',
+                fileName: 'Mail',
+                tableName: 'Mail',
+                ignoreColumn: [0],
+                worksheetName: ['Mail']
+            })
+        });
+   
+        $txtSystemName.blur(function () {
+
+            Query();
+        });
+        $btnQuery.click(function () {
+            Query();
+        });
+        function Query()
+        {
+
+            var SystemName, RMailAccount, CMailAccount;
+
+            SystemName = $txtSystemName.val().trim();
+            RMailAccount = $txtRMailAccount.val().trim();
+            CMailAccount = $txtCMailAccount.val().trim();
+
+            var Msg = "";
+            if (SystemName == "") {
+                Msg = Msg + "[SystemName] 不能为空 || ";
+
+            }
+
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+            var url = baseUrl + "/SF/Mail_View";
+            jsonData = { "SystemName": SystemName };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+        }
+        $btnSave.click(function () {
+            var SystemName, RMailAccount, CMailAccount;
+
+            SystemName = $txtSystemName.val().trim();
+            RMailAccount = $txtRMailAccount.val().trim();
+            CMailAccount = $txtCMailAccount.val().trim();
+
+            var Msg = "";
+            if (SystemName == "") {
+                Msg = Msg + "[SystemName] 不能为空 || ";
+
+            }
+            if (RMailAccount == "" && CMailAccount == "")
+            {
+                Msg = Msg + "[收件人]和[抄送人] 不能同时为空 || ";
+            }
+
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+            var url = baseUrl + "/SF/Mail_Save";
+            jsonData = { "SystemName": SystemName, "RMailAccount": RMailAccount, "CMailAccount": CMailAccount };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+        });
+        $btnDelete.click(function () {
+             
+
+            var selectRows = $tbResultTable.bootstrapTable('getSelections');
+     
+            if (selectRows.length == 0) {
+
+ 
+                ErrorMsg("请选择要删除的记录！");
+                return;
+            }
+            var msg = "您确定要删除吗？"
+            if (confirm(msg) == true) {
+                $ModalDoing.modal('show').css({
+                    width: 'auto',
+                    'margin-left': function () {
+                        return ($(this).width() / 10);
+                    },
+                    'margin-top': function () {
+                        return ($(this).height() / 2);
+                    },
+
+                });
+                var url = baseUrl + "/SF/Mail_Delete";
+                jsonData = { "jsonData": JSON.stringify(selectRows)};
+                ajaxJsonRequestDerived(url, 'post', jsonData, Mail_Delete, AjaxFailResult);
+            }
+
+
+
+        });
+        function Mail_Delete(data) {
+            if (data.result != "OK") {
+
+                ErrorMsg(data.result);
+
+                $ModalDoing.modal('hide');
+
+
+            } else {
+                //移除选中的行
+                var ids = $.map($tbResultTable.bootstrapTable('getSelections'), function (row) {
+                    return row.ID;
+                });
+                $tbResultTable.bootstrapTable('remove', {
+                    field: 'ID',
+                    values: ids
+                });
+                //$lblMessageError.html("");
+                //$lblMessageSuccess.html("(" + ids.length + ")行资料已删除");
+                OKMsg("(" + ids.length + ")行资料已删除");
+                $ModalDoing.modal('hide');
+            }
+        }
+
+
+
+        function Show_Data(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                DisableBtns();
+            } else {
+                $tbResultTable.bootstrapTable('load', data.tableData);
+                var dataLen = data.tableData.length;
+                EnableBtns();
+                OKMsg("一共(" + dataLen + ")行");
+            }
+        }
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href="' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350  > 请重新登录 </a>')
+
+
+                    tb_init('a.thickbox, area.thickbox, input.thickbox');
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+        function DisableBtns() {
+            $btnSave.attr("disabled", "disabled");
+            $btnDelete.attr("disabled", "disabled");
+            $btnToExcel.attr("disabled", "disabled");
+            $btnQuery.attr("disabled", "disabled");
+      
+        }
+        function EnableBtns() {
+            $btnSave.val("添加/更新");
+            $btnSave.attr("disabled", false);
+
+
+            $btnDelete.val("删除");
+            $btnDelete.attr("disabled", false);
+
+
+            $btnToExcel.val("导出数据Excel");
+            $btnToExcel.attr("disabled", false);
+            $btnQuery.attr("disabled", false);
+             
+
+        }
+        //初始化table end
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式 
+            clickToSelect: true,
+            search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            columns: [
+                 {
+                     field: 'Checked',
+                     title: '删除<br />',
+                     checkbox: true,
+                     formatter: function (value, row, index) {
+                         if (row.state == true)
+                             return {
+                                 disable: true,
+                                 checked: true
+
+                             };
+                         return value;
+                     }
+                 },
+
+                {
+                    //field: 'Item',
+                    title: 'Item<br />',
+
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'ID',
+                    align: 'center',
+                    title: 'ID',
+                    visible: false,
+                }, {
+                    field: 'System_Name',
+                    title: 'SystemName',
+
+
+                }, {
+                    field: 'Mail_Account',
+                    title: '收件人',
+
+
+                }, {
+                    field: 'Mail_Type',
+                    title: 'Mail_Type',
+
+
+                } ],
+ 
+        });
+    }) 
+</script>  
+<h5><a href="@baseUrl" >首页</a>>>SF>>SF基本设置>>Mail Setting</h5>
+ 
+
+@*<form class="form-inline" role="form">*@
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> Mail</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS" id="EditModel">  
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <label>SystemName:<input type="text" class="form-control" id="SystemName"  />
+
+                                </label> 
+                            </div>                           
+                         </div>
+
+                        <div class="row">
+                             <div class="col-md-6 ">
+                                <label>收件人 :</label> <span style="font-size:2px;font-style:italic;color:gray">若添加多人，请用英文分号(;)隔开</span>
+                                <textarea class="form-control" rows="20" cols="150" style="resize:none" id="RMailAccount" ></textarea>
+                                    
+                                
+                            </div>  
+                            <div class="col-md-6">
+                                <label>抄送人 : </label><span style="font-size:2px;font-style:italic;color:gray">若添加多人，请用英文分号(;)隔开</span>
+                                    <textarea class="form-control" rows="20" cols="150" style="resize:none" id="CMailAccount" ></textarea> 
+                            </div> 
+                        </div>   
+                        <div class="row">
+                            <div class="col-md-1 ">
+                                 
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                             <div class="col-md-2 ">
+                                 <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 divCSS">
+                        <div id="toolbar" class="toolbar">  
+                            <div class="btn-group">  
+                                <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel"  >  
+                                    <i class="glyphicon glyphicon-arrow-down"></i>  
+                                </button>  
+                                <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  >  
+                                    <i class="glyphicon glyphicon-trash"></i>  
+                                </button>  
+                            </div>  
+                        </div> 
+                        <table class="table table-hover"  id="ResultTable"  >
+ 
+                        </table>
+                    </div>
+                </div>
+                    
+ 
+ 
+            </div>
+        </div>
+    </div>
+   
+@*    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>Mail详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" disabled="disabled" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  disabled="disabled">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>*@
+@*</form>*@
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 
+
+
+
+
+
+

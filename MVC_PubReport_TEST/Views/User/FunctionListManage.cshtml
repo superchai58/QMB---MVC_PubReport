@@ -1,0 +1,151 @@
+﻿@{
+    ViewBag.Title = "菜单管理";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+@using MVC_PubReport.Models.Public;
+@{    
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+       
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+@model IEnumerable<TFunctionList> 
+<link href="~/CSS/multi-select.css"  rel="stylesheet" type="text/css">
+
+<script src="~/Scripts/jquery.multi-select.js" type="text/javascript"></script>
+<script src="~/Scripts/Pub_Report_FuctionList.js"></script>  
+<h5><a href="@baseUrl" >首页</a>>>系统管理员>>菜单管理</h5>
+ 
+
+<form class="form-inline" role="form" id ="UserInfo">
+    <div @*class="row "*@ style="margin-left:40%">
+        <label id="message-error" class="message-error">@ViewBag.Message</label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"> </span> 菜单管理</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-4 divCSS">
+                        <div class="row">
+                            <label  >父节点ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text" id="ParentID" disabled="disabled"  class="form-control"  />
+                        </div>
+                        <div class="row">
+                            <label  >父 节 点: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text"  id="ParentName" disabled="disabled" class="form-control"   />
+                        </div>
+                        @*<div class="row">
+                            <label  >节 点 ID: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text"    />
+                        </div>*@
+                         <div class="row">
+                            <label  >节 点:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text" id="MenuName"  class="form-control"   />
+                        </div>
+                        <div class="row">
+                            <label  >链接页面 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text"  id="LinkPage"  class="form-control"  />
+                        </div>
+                        <div class="row">
+                            <label>是否公开 :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <select id="IsPublic">
+                                <option value="">--Please Select--</option>
+                                <option value=1>是</option>
+                                <option value=0>否</option>
+                            </select>
+                        </div>
+
+
+                        <div class="row"style="margin-left:20%">                            
+                            <input type="button" value="保存" class="btn btn-primary btn-lg" id="Save" disabled="disabled"  />
+                             <input type="button" value="删除" class="btn btn-primary btn-lg" id="Delete"  disabled="disabled"  />
+                        </div>
+                    </div>
+                   @* <div class="col-md-1"></div>*@
+                    <div class="col-md-8 divCSS" >
+                        <h3 >菜单显示</h3><br />
+                            <div id='cssmenu'>
+                            <ul>
+                            @foreach (var item in Model)
+                            {
+                                if (@item.ParentMenuId == 1)
+                                { 
+                                    string ishasChild = UIHelper.isHasChild(item.MenuID,(List<TFunctionList>) Model ).ToString ();
+
+                                    if (ishasChild == "Y")
+                                    {
+                                        <li class='active has-sub'>
+                                            <a href='#' class="addMenu" id="@item.MenuID">@item.MenuName ||1</a>
+                                            <ul>
+                                                @foreach( var Parent2 in Model)
+                                                {
+                                                    if (@item.MenuID == Parent2 .ParentMenuId)
+                                                    {
+                                                        if (UIHelper.isHasChild(Parent2.MenuID, (List<TFunctionList>)Model).ToString() == "Y")
+                                                        {
+                                                            <li class ="active has-sub">
+                                                                <a class="addMenu" id="@Parent2.MenuID" >@Parent2.MenuName ||2</a>
+                                                                <ul>
+                                                                    @foreach(var Parent3 in Model)
+                                                                    {
+                                        
+                                                                        if (@Parent2.MenuID == Parent3.ParentMenuId )
+                                                                        {
+                                                                            <li ><a class="addMenu" id="@Parent3.MenuID">@Parent3.MenuName ||3</a></li>
+                                                                        }
+                                                                    }
+                                                                </ul>
+                                                            </li>
+ 
+                                                        }else
+                                                        {
+                                                            <li  ><a class="addMenu" id="@Parent2.MenuID">@Parent2.MenuName ||2</a></li>
+                                                        }
+                             
+                                                    }
+                                                }
+                    
+                                            </ul>
+
+                                        </li>
+                                    }else
+                                    {
+                                    <li><a href='#' class="addMenu" id="@item.MenuID">@item.MenuName ||1</a></li>
+                                    }
+        
+                                } 
+        
+                            } 
+                            <li><a href='#' class="addMenu" id="1">增加新的根节点 ||0</a></li>
+                            </ul>
+                        </div>  
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+@*<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+    <div class="modal-dialog" role="alertdialog">  
+                
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h3>恭喜您，权限加入成功，<span id="Timer" style="font-size:18px">3</span>s后会自动跳转到主页</h3>  
+            </div>  
+            <div class="modal-body">  
+                <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+            </div>
+        </div>
+    </div>
+</div>*@
+ 

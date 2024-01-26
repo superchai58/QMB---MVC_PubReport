@@ -1,0 +1,173 @@
+﻿@{
+    ViewBag.Title = "PD Upload Capacity Estimate";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+ 
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path); 
+}
+ 
+<script src="~/Scripts/xlsx.full.min.js"></script> 
+<script src="~/Scripts/calendar.js"></script>   
+<script src="~/Scripts/PUB_Report_Capacity.js"></script>  
+
+<link rel="stylesheet" type="text/css" href="~/CSS/calendar.css" />
+<style type="text/css"> 
+    ul, ol, li {
+	    list-style: none;
+	    padding: 0;
+	    margin: 0;
+    
+    } 
+ 
+</style>
+<script>
+    $(function () {
+        $('select').comboSelect();
+    });
+</script>
+
+    <h5><a href="@baseUrl" >首页</a>>>Upload>>UploadCapacityForPMC</h5> 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> Capacity_Plan</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container"> 
+                <div class="row">
+                    <label>Month:
+                        @*<input type="text" class="form-control" id="Month"  />*@
+                        <input type="text" id="dt" placeholder="请选择日期"  autocomplete="off" ><div id="dd"></div>  </label>
+                </div>               
+                <div class="row">
+                    <div class="col-md-7" >  
+
+                       @* <div class="row">   *@                         
+                            <label>PU:
+                                @*<input type="text" class="form-control" id="PU"  />*@
+                                
+                                @if (ViewData["PUListItem"] != null)
+                                { 
+                                    @Html.DropDownList("PU", ViewData["PUListItem"] as SelectList, "--Please Select--", new { @id = "PU",@class="form-control" })
+                                }
+                                     else
+                                {
+                                  <select class="form-control" id="PU" >
+                                      <option value="">--Please Select--</option>
+                                  </select>
+                                }
+                                   
+                               
+
+                            </label> 
+                         @*</div>*@
+                         <div class="row"> 
+                             <label>Type :
+                                 @*<input type="text" class="form-control" id="Type"  />*@
+                                  @if (ViewData["TypeListItem"] != null)
+                                { 
+                                    @Html.DropDownList("Type", ViewData["TypeListItem"] as SelectList, "--Please Select--", new { @id = "Type",@class="form-control" })
+                                }
+                                     else
+                                {
+                                  <select class="form-control" id="Type" >
+                                      <option value="">--Please Select--</option>
+                                  </select>
+                                }
+
+                             </label> 
+                         </div>
+
+                        
+                        <div class="row">
+                             
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                             <div class="col-md-2 ">
+                                 <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  />
+                            </div> 
+                           @* <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  *@
+                        </div>
+                    </div>
+                    @*<div class="col-md-1"></div>*@
+                    <div class="col-md-5 divCSS">
+                        <div class="row">
+                             <span style="color: Red">(以Excel方式上传.<a href="~/FileDL/DLFile?fileName=CapacityPlan_Temp.xls"
+                                class="btlink"  style="color:#00059B">模板下载</a>)</span>
+                        </div>
+                        <div class="row">
+                            <input type="file" id="UploadExcelFilePath" name="UploadExcelFilePath" />
+                            
+                        </div>
+                        <div class="row">
+                            <label>SheetName:
+                                <select id ="SheetName" >
+                                    <option value="">--Please Select--</option>
+                                   
+                                </select>
+                                 <input type="button" value="上传" class="btn btn-primary btn-sm" id="UploadExcel"  />
+                            </label>
+                        </div>
+                        <div class="row col-md-9 ">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60"
+                                    aria-valuemin="0" aria-valuemax="100" style="" id="prog_in">
+                                    <span class="sr-only">40% 完成</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>Capacity_Plan详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" disabled="disabled" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  disabled="disabled">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+<span id="demo"></span>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

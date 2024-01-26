@@ -1,0 +1,41 @@
+﻿
+@using MVC_PubReport.Models.Public
+
+    @helper ShowPrice(int price)
+    {
+        if (price == 0)
+        {
+            @:免费
+        }else{@price}
+    }
+
+
+ 
+
+    @functions {
+
+        public static IHtmlString isHasChild(int MenuID, List<TFunctionList> list)
+        {
+            HtmlString html = new HtmlString("");
+             
+            foreach (var item in list)
+            {
+                if (MenuID == item.ParentMenuId)
+                {
+                    html = new HtmlString("Y");
+                    break;
+                }
+                 
+                    
+            }
+            return html;
+        }
+        
+        
+        
+        
+        
+        
+    }
+
+    

@@ -1,0 +1,90 @@
+﻿@{
+    ViewBag.Title = "用户注册";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    //Layout = null;
+}
+@using MVC_PubReport.Models.User;
+@{   
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+        
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+@model IEnumerable<TUser> 
+<script src="~/Scripts/Pub_Report_User.js"></script>  
+<h5><a href="@baseUrl" >首页</a>>>用户基本信息</h5>
+ 
+
+<form class="form-inline" role="form" id ="UserInfo">
+    <div @*class="row "*@ style="margin-left:40%">
+        <label id="message-error" class="message-error">@ViewBag.Message</label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"> </span> 用户注册</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS">
+                        <div class="row">
+                            <label for="PU">PU: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                              <select name="PU" id ="PU">
+                                <option value="">Please Select</option>
+                                <option value="PU3">PU3</option>
+                                <option value="PU4">PU4</option>
+                                <option value="PU5">PU5</option>
+                                <option value="P1">P1</option>
+                                <option value="FA">Other</option>
+                            </select>
+                            <label for="Type">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbspType:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>                            
+                             <select name="Type" id ="Type">
+                                <option value="">Please Select</option>
+                                <option value="SMT">SMT</option>
+                                <option value="FA">FA</option>
+                                <option value="FA">Other</option>
+                            </select>
+                        </div>
+                       
+                        <div class="row">
+                            <label for="UserID">工  号:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text" id="UserID" name="UserID" />
+                        </div>
+                         <div class="row">
+                            <label for="PassWord">密 码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="password" id="PassWord" name="PassWord"  />
+                        </div>
+                         <div class="row">
+                            <label for="PassWordVerify">确认密码:&nbsp;&nbsp;</label>
+                            <input type="password" id="PassWordVerify" name="PassWordVerify"  />
+                        </div>
+                  
+                        <div class="row"style="margin-left:20%">                            
+                            <input type="button" value="注册" class="btn btn-primary btn-lg" id="register" disabled="disabled" />
+                        </div>
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+    <div class="modal-dialog" role="alertdialog">  
+                
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h3>恭喜您，注册成功，<span id="Timer" style="font-size:18px">3</span>s后会自动跳转到主页</h3>  
+            </div>  
+            <div class="modal-body">  
+                <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+            </div>
+        </div>
+    </div>
+</div>
+ 

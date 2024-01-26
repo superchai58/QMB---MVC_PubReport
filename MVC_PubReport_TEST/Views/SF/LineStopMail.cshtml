@@ -1,0 +1,361 @@
+﻿@{
+    ViewBag.Title = "LineStopMail";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+ 
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path); 
+}
+ 
+<script src="~/Scripts/xlsx.full.min.js"></script> 
+<script src="~/Scripts/calendar.js"></script>   
+<script src="~/Scripts/LineStop.js"></script>  
+
+<link rel="stylesheet" type="text/css" href="~/CSS/calendar.css" />
+<style type="text/css"> 
+    ul, ol, li {
+	    list-style: none;
+	    padding: 0;
+	    margin: 0;
+    
+    } 
+ 
+</style>
+<script>
+    //初始化table end
+    var $tbResultTable = $('#ResultTable');
+    var $ddPU = $('#PU');
+    var $ddType = $('#Type');
+    var $UID = $('#UID');
+    var $MailAccount = $('#MailAccount');
+    var $HostName = $('#HostName');
+    var $MailLevel = $('#MailLevel');
+    var $FixLevel = $('#FixLevel');
+
+    var $btnQuery = $('#Query');
+    var $btnSave = $('#save');
+    var $btnRest = $('#rest');
+    var $lblMessageError = $('#message-error');
+    var $lblMessageSuccess = $('#message-success');
+
+    $btnRest.click(function () {
+        $ddPU.find("option").eq(0).prop("selected", true);
+        $ddType.find("option").eq(0).prop("selected", true);
+        $MailLevel.find("option").eq(0).prop("selected", true);
+        $FixLevel.find("option").eq(0).prop("selected", true);
+        $UID.val("");
+        $MailAccount.val("");
+        $HostName.val("");
+        $tbResultTable.bootstrapTable('removeAll');
+    });
+
+    $btnSave.click(function () {
+        var PU, Type, UID, MailAccount, HostName, MailLevel, FixLevel;
+        var KeyName = $("#KeyName").text().trim();
+        PU = $ddPU.val();
+        Type = $ddType.val();
+        UID = $UID.val();
+        MailAccount = $MailAccount.val();
+        HostName = $HostName.val();
+        MailLevel = $MailLevel.val();
+        FixLevel = $FixLevel.val();
+
+
+        if (PU == "" || Type == "" || UID == "" || MailAccount == "" || HostName == "" || MailLevel == "" || FixLevel == "" ) {
+            ErrorMsg("数据不能为空");
+            return;
+        }
+        if (MailAccount == "ERIC.CHIU") {
+            ErrorMsg("Sorry, can not add VP into Mail Group!");
+            return;
+        }
+
+        var url = baseUrl + "/SF/LineStopMail_Save";
+        jsonData = { "PU": PU, "Type": Type, "UID":UID, "MailAccount":MailAccount, "HostName":HostName, "MailLevel":MailLevel, "FixLevel":FixLevel }
+        ajaxJsonRequestDerived(url, 'post', jsonData, ShowDataAll, AjaxFailResult)
+
+    })
+    $ddPU.change(function () {
+        $ddType.val($ddType.find("option:eq(0)").val());
+    });
+    $ddType.change(function () {
+        var PU, Type;
+       
+        PU = $ddPU.val();
+        Type = $ddType.val();
+
+        var KeyName = $("#KeyName").text().trim();
+
+        if (PU == "" || Type == "") {
+            ErrorMsg("PU/Type 不能为空");
+            return;
+        }
+        var url = baseUrl + "/SF/Upload_QueryID";
+        jsonData = { "PU": PU, "Type": Type, "Auth": KeyName }
+        ajaxJsonRequestDerived(url, 'post', jsonData, ShowData, AjaxFailResult)
+    });
+
+    function ShowData(data) {
+        $MailLevel.empty();
+        $MailLevel.append("<option value=>--Please Select--</option>");
+        for (var i = 1; i < 6; i++) {
+            $MailLevel.append("<option value=" + i + ">" + i + "</option>");
+        }
+        $FixLevel.empty();
+        $FixLevel.append("<option value=>--Please Select--</option>");
+        for (var i = 1; i < 6; i++) {
+            $FixLevel.append("<option value=" + i + ">" + i + "</option>");
+        }
+        $tbResultTable.bootstrapTable('load', data.tableData);
+
+        OKMsg("一共(" + data.tableData.length + ")行资料");
+    }
+    $btnQuery.click(function () {
+        var PU, Type, UID;
+
+        PU = $ddPU.val();
+        Type = $ddType.val();
+        UID = $UID.val();
+
+        var KeyName = $("#KeyName").text().trim();
+        //alert(TableName);
+        //alert(KeyName.trim());
+        if (PU == "" || Type == "") {
+            ErrorMsg("PU/Type 不能为空");
+            return;
+        }
+
+        var url = baseUrl + "/SF/Mail_Query";
+
+        jsonData = { "PU": PU, "Type": Type, "UID": UID };
+
+        ajaxJsonRequestDerived(url, 'post', jsonData, ShowDataAll, AjaxFailResult);
+
+
+    });
+
+    function ShowDataAll(data) {
+        if (data.result != "OK") {
+
+            ErrorMsg(data.result);
+            $tbResultTable.bootstrapTable('removeAll');
+        }
+        else {
+            $UID.val("");
+            $MailAccount.val("");
+            $HostName.val("");
+            $tbResultTable.bootstrapTable('load', data.tableData);
+
+            OKMsg("一共(" + data.tableData.length + ")行资料");
+        }
+
+    }
+
+    function OKMsg(msg) {
+        $lblMessageError.html("");
+        $lblMessageSuccess.html(msg);
+    }
+    function ErrorMsg(msg) {
+        if (msg == "用户登录已失效，请重新登录后操作") {
+            //location.reload();
+            if ($UserLogin.length != 0) {
+                $UserLogOut.html("");
+                $UserLogin.html("");
+                $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href="' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350"  > 请重新登录 </a>')
+
+
+                tb_init('a.thickbox, area.thickbox, input.thickbox');
+                imgLoader = new Image();// preload image
+                imgLoader.src = tb_pathToImage;
+            }
+
+        }
+        $lblMessageError.html(msg);
+        $lblMessageSuccess.html("");
+    }
+    $tbResultTable.bootstrapTable({
+        editable: true, //开启编辑模式 
+        clickToSelect: true,
+        search: true,
+        datatype: "json",
+        toolbar: '#toolbar',//工具按钮用哪个容器
+        striped: true,                      //是否显示行间隔色
+        columns: [
+             {
+                 field: 'Checked',
+                 title: '删除<br />',
+                 checkbox: true,
+                 formatter: function (value, row, index) {
+                     if (row.state == true)
+                         return {
+                             disable: true,
+                             checked: true
+
+                         };
+                     return value;
+                 }
+             },
+
+            {
+                //field: 'Item',
+                title: 'Item<br />',
+
+                formatter: function (value, row, index)
+                { return index + 1 }
+            }, {
+                field: 'ID',
+                align: 'center',
+                title: 'ID',
+                visible: false,
+            }, {
+                field: 'UID',
+                title: 'UID',
+
+
+            }, {
+                field: 'MailAccount',
+                title: 'MailAccount',
+
+
+            }, {
+                field: 'HostName',
+                title: 'HostName',
+
+
+            }, {
+                field: 'MailLevel',
+                title: 'MailLevel',
+
+
+            }, {
+                field: 'FixLevel',
+                title: 'FixLevel',
+
+
+            }],
+
+    });
+</script>
+
+    <h5><a href="@baseUrl" >首页</a>>>SF>>LineStop>>Mail</h5> 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 id ="KeyName" class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> Mail</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">           
+                <div class="row">
+                    <div class="col-md-7 divCSS" id="EditModel">
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <label>PU:
+                                 @if (ViewData["PUListItem"] != null)
+                                    { 
+                                        @Html.DropDownList("PU", ViewData["PUListItem"] as SelectList, "--Please Select--", new { @id = "PU",@class="form-control"})
+                                    } 
+                                    </label>
+                            </div>
+                            <div class="col-md-4 ">
+                                <label>Type:
+                                @*<input type="text" id="CategoryName" class="form-control" />*@
+                                 @if (ViewData["TypeListItem"] != null)
+                                    { 
+                                        @Html.DropDownList("Type", ViewData["TypeListItem"] as SelectList, "--Please Select--", new { @id = "Type",@class="form-control"})
+                                    }
+                                    </label>
+                            </div>
+
+                            <div class="col-md-4 ">
+                                <label>UID:
+                                <input type="text" class="form-control" id="UID"  /> </label> 
+                            </div>
+                            <div class="col-md-4 ">
+                                <label>MailAccount:
+                                <input type="text" class="form-control" id="MailAccount"  /> </label> 
+                            </div>
+                            <div class="col-md-4 ">
+                                <label>HostName:
+                                <input type="text" class="form-control" id="HostName"  /> </label> 
+                            </div>
+                            <div class="col-md-4 ">
+                                <label>MailLevel:
+                                 <select  id="MailLevel" class="form-control" />
+                                    </label>
+                            </div>
+                            <div class="col-md-4 ">
+                                <label>FixLevel:
+                                @*<input type="text" id="CategoryName" class="form-control" />*@
+                                 <select type="text" id="FixLevel" class="form-control" />
+                                    </label>
+                            </div>
+                        </div> 
+                      
+                        <div class="row">
+                             
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                             <div class="col-md-2 ">
+                                 <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加\更新" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  
+@*                            <div class="col-md-2 ">
+                                 <input type="button" value="更新" class="btn btn-primary btn-sm" id="update"  />
+                            </div>  *@
+                        </div>
+                    </div>
+                  
+                    </div>
+                </div> 
+            </div>
+        </div>
+
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>Mail详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel"  >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  >  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+<span id="demo"></span>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

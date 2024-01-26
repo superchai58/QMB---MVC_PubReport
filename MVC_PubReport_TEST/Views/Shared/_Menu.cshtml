@@ -1,0 +1,99 @@
+﻿@{
+    Layout = null;
+}
+
+@using MVC_PubReport.Models.Public;
+@model IEnumerable<TFunctionList> 
+ 
+   @{   
+       var request =   HttpContext.Current.Request;
+       var requestScheme= request.Url.Scheme;
+       var requestAuth= request.Url.Authority;
+       var path = HttpRuntime.AppDomainAppVirtualPath;
+       var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+}
+           @using MVC_PubReport.Models.User
+          
+     <div class="header">        
+         <span class="spn0">Pub Report</span>
+         @if (Session["Pub_Report_User"] != null)
+         { 
+             TUser user = Session["Pub_Report_User"] as TUser;
+            <span class="spn3" id="UserLogin"><a   href="@Url.Action("ViewUser", "User", new {UserID=@user.UserID})"    title="Yeah,It's me"  >@user.UserID</a></span>
+            <span class="spn2" id="UserLogOut"><a href="@Url.Action("LoginOut","User")" title="退出">退出</a></span> 
+         }
+         else
+         {
+             <span class="spn3"><a class="thickbox" href="@Url.Action("Login", "User", new { keepThis = true, TB_iframe = true, height = 430, width = 350 })"    title="登录PUB Report"  > 请登录 </a></span>
+          
+         }
+
+         
+ 
+    </div>
+<div id='cssmenu'>
+<ul>
+    @if (@ViewData.Model != null)
+    { 
+        foreach (var item in Model)
+        {
+            if (@item.ParentMenuId == 1)
+            { 
+                string ishasChild = UIHelper.isHasChild(item.MenuID,(List<TFunctionList>) Model ).ToString ();
+
+                if (ishasChild == "Y")
+                {
+                    <li class='active has-sub'>
+                        <a href='#'>@item.MenuName</a>
+                        <ul>
+                            @foreach( var Parent2 in Model)
+                            {
+                                if (@item.MenuID == Parent2 .ParentMenuId)
+                                {
+                                    if (UIHelper.isHasChild(Parent2.MenuID, (List<TFunctionList>)Model).ToString() == "Y")
+                                    {
+                                        <li class ="active has-sub">
+                                           @* <a href='@baseUrl@Parent2.LinkPage' >@Parent2.MenuName</a>*@
+                                             <a href='javascript:void(0)' >@Parent2.MenuName</a>
+                                            <ul>
+                                                @foreach(var Parent3 in Model)
+                                                {
+                                        
+                                                    if (@Parent2.MenuID == Parent3.ParentMenuId )
+                                                    {
+                                                       // <li ><a href='@baseUrl@Parent3.LinkPage'>@Parent3.MenuName</a></li>
+                                                        <li ><a href='javascript:void(0)' onclick="menuClick('@baseUrl@Parent3.LinkPage')" >@Parent3.MenuName</a></li>
+                                                    }
+                                                }
+                                            </ul>
+                                        </li>
+ 
+                                    }else
+                                    {
+                                        //<li  ><a href='@baseUrl@Parent2.LinkPage' >@Parent2.MenuName</a></li>
+                                        <li  ><a href='javascript:void(0)' onclick="menuClick('@baseUrl@Parent2.LinkPage')" >@Parent2.MenuName</a></li>
+                                    }
+                             
+                                }
+                            }
+                    
+                        </ul>
+
+                    </li>
+                }else
+                {
+                <li><a href='#'>@item.MenuName</a></li>
+                }
+        
+            } 
+        
+        } 
+ 
+    
+    }
+
+</ul>
+</div> 
+<a href="~/Query/IE_DailyRpt_ToMIS_log" target="_blank">测试</a>
+<script src="~/Scripts/laydate/laydate.js"></script>  
+ 

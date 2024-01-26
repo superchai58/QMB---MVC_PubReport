@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="MVC_PubReport.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="MVC_PubReport_MISHR_WebService_OAService" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://172.16.2.27/OAMS/WS/OAService.asmx</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

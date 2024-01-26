@@ -1,0 +1,111 @@
+﻿@{
+    ViewBag.Title = "查询Efficiency";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+@using MVC_PubReport.Models.IE
+@{    
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+       
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+@model IEnumerable<TIE_InputQty> 
+  
+<link rel="stylesheet" type="text/css" href="~/CSS/calendar.css" />
+<style type="text/css"> 
+ul, ol, li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+    
+} 
+ 
+</style>
+<script src="~/Scripts/Pub_Report_Efficiency.js"></script>   
+<script src="~/Scripts/calendar.js"></script>  
+ 
+<h5><a href="@baseUrl" >首页</a>>>查询>>查询Efficiency</h5>
+ 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-search"></span> Efficiency_DailyDetail</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row"> 
+                    <label>&nbsp;&nbsp;&nbsp;Date: </label> 
+                    <input type="text" id="dt" placeholder="请选择日期"  ><div id="dd"></div>   
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>Mode: </label>                             
+                        @if (ViewData["ModeListItem"] != null)
+                        { 
+                            @Html.DropDownList("Mode", ViewData["ModeListItem"] as SelectList, "--Please Select--", new { @id = "Mode",@class="form-control" })
+                        }                        
+                    </div>   
+                      <div class="col-md-2">
+                        <label>Shift: </label>
+                        <select id="Shift" class="form-control">
+                           <option  value="">--Please Select--</option> 
+                           <option  value="D">D</option> 
+                           <option  value="N">N</option> 
+                        </select>
+                    </div>
+                     <div class="col-md-2">
+                        <label>Line: </label> <input type="text" id="Line" class="form-control" >
+                    </div>
+                </div> 
+                <div class="row"> 
+                    <div class="col-md-1">
+                         
+                    </div>
+                    <div class="col-md-2">
+                        <input type="button" value="重置" class="btn btn-primary btn-sm " id="Reset" /> 
+                    </div>
+                     <div class="col-md-2">
+                        <input type="button" value="查询" class="btn btn-primary btn-sm " id="Query" /> 
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span> Efficiency_DailyDetail 详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+ 
+ 
+
+
+
+
+
+

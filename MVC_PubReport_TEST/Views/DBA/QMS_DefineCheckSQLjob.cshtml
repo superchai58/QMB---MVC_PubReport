@@ -1,0 +1,144 @@
+﻿@{
+    ViewBag.Title = "维护JOB信息";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+ 
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+   
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+ 
+<script src="~/Scripts/PUB_Report_QMS_DefineCheckSQLjobs.js"></script>  
+<h5><a href="@baseUrl" >首页</a>>>系统管理员>>QMS资料维护>> 维护JOB信息 </h5>
+ 
+
+<form class="form-inline" role="form">
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> QMS_DefineCheckSQLjobs_Detail</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-12 divCSS" id="EditModel">  
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <label >ServerIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    @if (ViewData["ServerIP"] != null)
+                                    { 
+                                        @Html.DropDownList("ServerIP", ViewData["ServerIP"] as SelectList, "--Please Select--", new { @id = "ServerIP",@class="form-control" })
+                                    }
+                                </label>
+                            </div> 
+                            <div class="col-md-4 ">
+                                <label>Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+                                    <select id="Type" class="form-control">
+                                        <option value="">--Please Select--</option>
+                                        <option value="FA">FA</option>
+                                        <option value="SMT">SMT</option>
+                                    </select>
+                                </label>
+                            </div> 
+                            <div class="col-md-4 ">
+                                <label>MailGroup:&nbsp;
+                                    <select id="MailGroup" class="form-control">
+                                        <option value="">--Please Select--</option>
+                                        <option value="ALL">ALL</option>
+                                        <option value="CQ_QMS_FA">CQ_QMS_FA</option>
+                                        <option value="CQ_QMS_SMT">CQ_QMS_SMT</option>
+                                    </select>
+                                </label>
+                            </div>  
+                        </div>
+                        <div class="row">
+                           <div class="col-md-4 ">
+                                <label>JOBName:&nbsp;&nbsp;
+                                    <input type="text" id="Jobname" class="form-control" />
+                                </label>
+                            </div> 
+                            <div class="col-md-4 ">
+                                <label>执行时间:&nbsp;&nbsp;
+                                    <input type="text" id="Max_allowed_Duration" class="form-control" />
+                                </label>
+                            </div> 
+                            <div class="col-md-4 ">
+                                <label>Owner:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+                                    <input type="text" id="Owner" class="form-control" />
+                                </label>  
+                            </div>  
+                          
+                        </div>
+                         
+                        <div class="row">
+                            <div class="col-md-3 ">
+                                 
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest" />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save" />
+                            </div> 
+                            
+
+                        </div>
+                    </div>
+ 
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span> QMS_DefineCheckSQLjobs_Detail详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete" >  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 
+
+
+
+
+
+

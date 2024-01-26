@@ -1,0 +1,109 @@
+﻿ @using MVC_PubReport.Models.User
+@model IEnumerable<TUser> 
+@{
+    ViewBag.Title = "QITS_CompanyCode";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+    var QueryStr = request.Url.Query;
+    TUser User = Session["Pub_Report_User"] as TUser;
+    var UserRole = "";
+    if (User != null)
+    {
+        UserRole = User.UserRole;
+    }
+    
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }  
+ }
+ 
+ 
+ <script>
+     var QueryStr = '@QueryStr';
+     var UserRole = '@UserRole';
+</script>
+  
+<script src="~/Scripts/xlsx.full.min.js"></script>  
+<script src="~/Scripts/PUB_QITS_IssueType.js"></script>  
+
+ 
+@*<a href='javascript:void(0);' onclick='ShowModal(1)'  style='margin-left:5px; color:#003399'><li class='glyphicon glyphicon-pencil'></li></a> *@
+<h5><a href="@baseUrl" >首页</a>>>QA>>QITS_IssueType代码维护</h5>
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>QITS_IssueTypeSetting详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button> 
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="新增" id="Add" >  
+                        <i class="glyphicon glyphicon-plus"></i>  
+                    </button> 
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+@*<span id="demo">show</span>*@
+<div class="modal fade" id="AddInfo" tabindex="-1" role="scrollbar" data-backdrop="static" >  
+            <div class="modal-dialog" role="scrollbar">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>编辑 IssueType 信息</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <div class="row">
+                            <label for="IssueType">IssueType: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            <input type="text" id="IssueType" name="IssueType" class="form-control" /></label>
+                        </div>
+                       
+                        <div  class="row">
+                            <label id="message-error-modal" class="message-error"></label>
+                            <label id="message-success-modal" class="message-success"></label>
+                        </div>
+                         <div class="row">
+                            <input type="button" value="重置" class="btn btn-primary btn-sm" id="reset" />
+                            <input type="button" value="保存" class="btn btn-primary btn-sm" id="save" />
+                            <input type="button" value="关闭" class="btn btn-primary btn-sm" id="close" /> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+ </div>
+
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

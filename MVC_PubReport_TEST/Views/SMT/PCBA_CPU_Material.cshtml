@@ -1,0 +1,578 @@
+﻿@{
+    ViewBag.Title = "PCBA_CPU_MaterialMapping";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+   
+}
+ 
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path); 
+}
+   @Scripts.Render("~/jquery.js")
+        @Scripts.Render("~/Pub_Report.js")
+ 
+        @Styles.Render("~/CSS.css") 
+<script src="~/Scripts/xlsx.full.min.js"></script>  
+ 
+<script>
+    $(document).ready(function () { 
+
+        var $btnRest = $('#rest');
+        var $btnSave = $('#save');
+        var $btnToExcel = $('#ToExcel');
+        var $btnDelete = $('#delete');
+        var $btnQuery = $('#Query');
+        var $btnUploadExcel = $('#UploadExcel')
+
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+        var $tbResultTable = $('#ResultTable');
+        var $ModalDoing = $('#doing');
+
+        var $UploadExcelFilePath = $('#UploadExcelFilePath')
+        var $ddSheetName = $('#SheetName');
+        
+
+        var $txtPCBAPN = $('#PCBAPN');
+        var $txtNBDescription = $('#NBDescription');
+        var $txtCPUPN = $('#CPUPN');
+        var $txtCPUDescription = $('#CPUDescription');
+        var $txtStatus = $('#Status');
+        var $txtCPUDes = $('#CPUDes');
+        var $txtPlant = $('#Plant');
+
+
+        var wb;//读取完成的数据
+        var rABS = false; //是否将文件读取为二进制字符串
+        $UploadExcelFilePath.change(function (e) {
+         
+            var f = e.target.files
+            var reader = new FileReader();
+            var SheetNames;
+
+            var suffix = f[0].name.split(".")[1];
+            if (suffix != "xls" && suffix != "xlsx") {
+                ErrorMsg("导入文件格式不是xls/xlsx 格式");
+                return;
+            }
+            if (f[0].size / 1024 > importfile_maxsize) {
+                ErrorMsg("导入的表格文件不能大于1M");
+                return;
+            }
+
+            wb = undefined;
+            reader.onload = function (e) {
+                var data = e.target.result;
+                if (rABS) {
+                    wb = XLSX.read(btoa(fixdata(data)), {//手动转化
+                        type: 'base64'
+                    });
+                } else {
+                    wb = XLSX.read(data, {
+                        type: 'binary'
+                    });
+                }
+                //wb.SheetNames[0]是获取Sheets中第一个Sheet的名字
+                //wb.Sheets[Sheet名]获取第一个Sheet的数据  JSON.stringify(w.SheetNames);
+                //document.getElementById("demo").innerHTML = JSON.stringify(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+                //document.getElementById("demo").innerHTML = JSON.stringify(wb.SheetNames);
+                //document.getElementById("demo").innerHTML = wb.SheetNames;
+                SheetNames = wb.SheetNames;
+
+               
+                $ddSheetName.empty();
+                var optionStr = "<option value='' >--Please Select--</option>";
+                for (var i = 0; i < SheetNames.length; i++) {
+                    optionStr = optionStr + "<option value='" + SheetNames[i] + "' >" + SheetNames[i] + "</option>";
+                }
+                var option = $(optionStr);
+                $ddSheetName.append(option);
+                //alert(JSON.stringify(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]])));
+            };
+            if (rABS) {
+                reader.readAsArrayBuffer(f[0]);
+            } else {
+                reader.readAsBinaryString(f[0]);
+            } 
+        }) 
+        function fixdata(data) { //文件流转BinaryString
+            var o = "",
+                l = 0,
+                w = 10240;
+            for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+            o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+            return o;
+        }
+
+
+
+        $btnUploadExcel.click(function (e) {
+            var filePath = "";
+            var SheetName = "";
+
+            filePath = $UploadExcelFilePath.val();
+            SheetName = $ddSheetName.val();
+
+            if (filePath == "" || filePath == undefined)
+            {
+                ErrorMsg("请选择文件");
+                return;
+            }
+            if (SheetName == "" || SheetName == undefined) {
+                ErrorMsg("请选择SheetName");
+                return;
+            }
+            //var excelContext = JSON.stringify(XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]));
+            var excelJson = XLSX.utils.sheet_to_json(wb.Sheets[SheetName]);
+           
+            if (excelJson.length == 0)
+            {
+                ErrorMsg("没有对应的资料");
+                return;
+            }
+            if (excelJson.length > 1000) {
+                ErrorMsg("最多上传1000 行资料");
+                return;
+            }
+            //循环检查资料是否合法
+            var newExcelJson = new Array();
+            for (var i = 0; i < excelJson.length; i++)
+            {
+                if (checkData(excelJson[i]) == true)
+                {
+                    newExcelJson.push(excelJson[i]);
+                    
+                }
+            }
+            //alert(excelContext);
+            var excelContext = JSON.stringify(newExcelJson);
+            var url = baseUrl + "/SMT/PCBA_CPU_MaterialSave";
+            var jsonData = { "jsonData": excelContext };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+
+        })
+
+        function checkData(json)
+        {
+            if (json.PCBAPN == "" || json.PCBAPN == null)
+            {
+                return false;
+            }
+            if (json.NBDescription == "" || json.NBDescription == null) {
+                return false;
+            }
+            if (json.CPUPN == "" || json.CPUPN == null) {
+                return false;
+            }
+            if (json.CPUDescription == "" || json.CPUDescription == null) {
+                return false;
+            }
+            if (json.CPUDes == "" || json.CPUDes == null) {
+                return false;
+            }
+            if (json.Plant == "" || json.Plant == null) {
+                return false;
+            }
+            if (json.Status == "" || json.Status == null) {
+                return false;
+            }
+
+            return true;
+        }
+
+        function Show_Data(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                 
+            } else {
+                $tbResultTable.bootstrapTable('load', data.tableData);
+                var dataLen = data.tableData.length;
+                EnableBtns();
+                OKMsg("一共(" + dataLen + ")行");
+            }
+        }
+
+
+        $btnDelete.click(function () {
+
+
+            var selectRows = $tbResultTable.bootstrapTable('getSelections');
+
+            if (selectRows.length == 0) {
+
+
+                ErrorMsg("请选择要删除的记录！");
+                return;
+            }
+            var msg = "您确定要删除吗？"
+            if (confirm(msg) == true) {
+                $ModalDoing.modal('show').css({
+                    width: 'auto',
+                    'margin-left': function () {
+                        return ($(this).width() / 10);
+                    },
+                    'margin-top': function () {
+                        return ($(this).height() / 2);
+                    },
+
+                });
+                var url = baseUrl + "/SMT/PCBA_CPU_MaterialDelete";
+                jsonData = { "jsonData": JSON.stringify(selectRows) };
+                ajaxJsonRequestDerived(url, 'post', jsonData,DeleteData, AjaxFailResult);
+            }
+
+
+
+        });
+        function DeleteData(data) {
+            if (data.result != "OK") {
+
+                ErrorMsg(data.result);
+
+                $ModalDoing.modal('hide');
+
+
+            } else {
+                //移除选中的行
+                var ids = $.map($tbResultTable.bootstrapTable('getSelections'), function (row) {
+                    return row.PCBAPN;
+                });
+                $tbResultTable.bootstrapTable('remove', {
+                    field: 'PCBAPN',
+                    values: ids
+                });
+                //$lblMessageError.html("");
+                //$lblMessageSuccess.html("(" + ids.length + ")行资料已删除");
+                OKMsg("(" + ids.length + ")行资料已删除");
+                $ModalDoing.modal('hide');
+            }
+        }
+
+
+
+         
+        $btnRest.click(function () {
+            $txtPCBAPN.val("");
+            $txtNBDescription.val("");
+            $txtCPUPN.val("");
+            $txtCPUDescription.val("");
+            $txtStatus.val("");
+            $txtCPUDes.val("");
+            $txtPlant.val("");
+            $tbResultTable.bootstrapTable('removeAll');
+        });
+
+
+        $btnSave.click(function () {
+            var PCBAPN, NBDescription, CPUPN, CPUDescription, Status, CPUDes, Plant;
+
+            PCBAPN = $txtPCBAPN.val().trim();
+            NBDescription = $txtNBDescription.val().trim();
+            CPUPN = $txtCPUPN.val().trim();
+            CPUDescription = $txtCPUDescription.val().trim();
+            Status = $txtStatus.val().trim();
+            CPUDes = $txtCPUDes.val().trim();
+            Plant = $txtPlant.val().trim();
+
+            var jsonArray = new Array();
+            json = { 'PCBAPN': PCBAPN, 'NBDescription': NBDescription, 'CPUPN': CPUPN, 'CPUDescription': CPUDescription, 'CPUDes': CPUDes, 'Plant': Plant, 'Status': Status };
+            jsonArray.push(json);
+
+            if (checkData(json) == false) {
+                ErrorMsg("所有资料都是不能为空，请填写完整，谢谢！");
+                return;
+
+            }
+            var context = JSON.stringify(jsonArray);
+            var url = baseUrl + "/SMT/PCBA_CPU_MaterialSave";
+            var jsonData = { "jsonData": context };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+         
+
+        })
+        $btnQuery.click(function () {
+            var PCBAPN, NBDescription, CPUPN, CPUDescription, Status, CPUDes, Plant;
+
+            PCBAPN = $txtPCBAPN.val().trim();
+            NBDescription = $txtNBDescription.val().trim();
+            CPUPN = $txtCPUPN.val().trim();
+            CPUDescription = $txtCPUDescription.val().trim();
+            Status = $txtStatus.val().trim();
+            CPUDes = $txtCPUDes.val().trim();
+            Plant = $txtPlant.val().trim();
+
+            var jsonArray = new Array();
+            json = { 'PCBAPN': PCBAPN, 'NBDescription': NBDescription, 'CPUPN': CPUPN, 'CPUDescription': CPUDescription, 'CPUDes': CPUDes, 'Plant': Plant, 'Status': Status };
+            jsonArray.push(json);
+
+ 
+            var context = JSON.stringify(jsonArray);
+            var url = baseUrl + "/SMT/PCBA_CPU_MaterialQuery";
+            var jsonData = { "jsonData": context };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+
+
+        })
+
+        $btnToExcel.click(function () {
+
+            $tbResultTable.tableExport({
+                type: 'excel',
+                escape: 'false',
+                fileName: 'PCBA_CPU_MaterialMapping',
+                tableName: 'PCBA_CPU_MaterialMapping',
+                ignoreColumn: [0,1],
+                worksheetName: ['PCBA_CPU_MaterialMapping']
+            })
+        });
+
+
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html("<a class='thickbox' title='登录PUB Report'  href='" + baseUrl + "/User/Login?keepThis=True&TB_iframe=True&height=430&width=350'>请重新登录</a>");
+                    tb_init("a.thickbox, area.thickbox, input.thickbox");
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+        function DisableBtns() {
+            $btnSave.attr("disabled", "disabled");
+            $btnDelete.attr("disabled", "disabled");
+            $btnToExcel.attr("disabled", "disabled");
+            $btnQuery.attr("disabled", "disabled");
+
+        }
+        function EnableBtns() {
+            //$btnSave.val("添加/更新");
+            $btnSave.attr("disabled", false);
+
+
+            //$btnDelete.val("删除");
+            $btnDelete.attr("disabled", false);
+
+
+            //$btnToExcel.val("导出数据Excel");
+            $btnToExcel.attr("disabled", false);
+            $btnQuery.attr("disabled", false);
+
+
+        }
+        //初始化table end
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式 
+            clickToSelect: true,
+            search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            columns: [
+                 {
+                     field: 'Checked',
+                     title: '删除<br />',
+                     checkbox: true,
+                     formatter: function (value, row, index) {
+                         if (row.state == true)
+                             return {
+                                 disable: true,
+                                 checked: true
+
+                             };
+                         return value;
+                     }
+                 },
+
+                {
+                    //field: 'Item',
+                    title: 'Item<br />',
+
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'ID',
+                    align: 'center',
+                    title: 'ID',
+                    visible: false,
+                }, {
+                    field: 'PCBAPN',
+                    title: 'PCBAPN',
+
+
+                }, {
+                    field: 'NBDescription',
+                    title: 'NBDescription',
+
+
+                }, {
+                    field: 'CPUPN',
+                    title: 'CPUPN',
+
+
+                }, {
+                    field: 'CPUDescription',
+                    title: 'CPUDescription',
+
+
+                }, {
+                    field: 'CPUDes',
+                    title: 'CPUDes',
+
+
+                }, {
+                    field: 'Plant',
+                    title: 'Plant',
+
+
+                }, {
+                    field: 'Status',
+                    title: 'Status',
+
+
+                }, {
+                    field: 'UserID',
+                    title: 'UserID',
+
+
+                }   ],
+
+        });
+    })
+</script>  
+<h5><a href="@baseUrl" >首页</a>>>SMT>>PCBA CPU等级报表>>PCBA CPU料号维护</h5>
+ 
+
+ 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> PCBA_CPU_MaterialMapping</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS" id="EditModel">  
+                        <div class="row">                            
+                            <label class="col-md-4 ">PCBAPN:<input type="text" class="form-control" id="PCBAPN"  /></label> 
+ 
+                            <label class="col-md-6 ">NBDescription:<input type="text" class="form-control" id="NBDescription"  /></label> 
+                         </div>
+                         <div class="row"> 
+                             <label class="col-md-4 ">CPUPN :<input type="text" class="form-control" id="CPUPN"  /></label> 
+                             <label class="col-md-6 ">CPUDescription :<input type="text" class="form-control" id="CPUDescription"  /></label> 
+                         </div>
+                         <div class="row"> 
+                             
+                            <label class="col-md-4 ">Status :<input type="text" class="form-control" id="Status"  /></label>  
+                             <label class="col-md-6 ">CPUDes :<input type="text" class="form-control" id="CPUDes"  /></label> 
+                            
+                         </div>
+                        <div class="row"> 
+                               <label class="col-md-4 ">Plant :<input type="text" class="form-control" id="Plant"  /></label> 
+                         </div>
+ 
+                        
+                        <div class="row">
+                            <div class="col-md-1 ">
+                                 
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                             <div class="col-md-2 ">
+                                 <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 divCSS">
+                        <div class="row">
+                             <span style="color: Red">(以Excel方式上传.<a href="~/FileDL/DLFile?fileName=PCBA_CPU_MaterialMapping_Temp.xlsx"
+                                class="btlink"  style="color:#00059B">模板下载</a>)请不要更改表头</span>
+                        </div>
+                        <div class="row">
+                            <input type="file" id="UploadExcelFilePath" name="UploadExcelFilePath" />
+                            
+                        </div>
+                        <div class="row">
+                            <label>SheetName:
+                                <select id ="SheetName" >
+                                    <option value="">--Please Select--</option>
+                                   
+                                </select>
+                                 <input type="button" value="上传" class="btn btn-primary btn-sm" id="UploadExcel"  />
+                            </label>
+                        </div>
+                        <div class="row col-md-9 ">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60"
+                                    aria-valuemin="0" aria-valuemax="100" style="" id="prog_in">
+                                    <span class="sr-only">40% 完成</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>PCBA_CPU_MaterialMapping详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel"   >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"   >  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+@*<span id="demo"></span>*@
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

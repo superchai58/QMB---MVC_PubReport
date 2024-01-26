@@ -1,0 +1,284 @@
+﻿@{
+    ViewBag.Title = "查询产出";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+@using MVC_PubReport.Models.IE
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+      
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+ 
+  
+<link rel="stylesheet" type="text/css" href="~/CSS/calendar.css" />
+<style type="text/css"> 
+ul, ol, li {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+    
+} 
+ 
+</style>
+ 
+<script src="~/Scripts/calendar.js"></script>  
+<script>
+
+    $(document).ready(function () {
+        //每个query网页都有的控件
+
+
+        var $btnQuery = $('#Query');
+        var $btnToExcel = $('#ToExcel');
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+
+        var $tbResultTable = $('#ResultTable');
+        //
+
+
+        var $txtDT = $("#dt");
+        var $Calendar = $('#dd');
+        var $ddPU = $('#PU');
+        
+
+        var dt = showdate(-1);
+        $txtDT.val(dt);
+
+        //绑定日历
+        var $Calendar = $('#dd');
+        $Calendar.calendar({
+            trigger: '#dt',
+            zIndex: 999,
+            format: 'yyyymmdd',
+            onSelected: function (view, date, data) {
+                console.log('event: onSelected')
+            },
+            onClose: function (view, date, data) {
+                var Date;
+                Date = $txtDT.val().trim();
+                if (Date == "") {
+                    ErrorMsg("Please choose date");
+                    return;
+                }
+
+
+                url = baseUrl + "/Query/IE_DailyProductQty_GetPU";
+                jsonData = { "Date": Date }
+                ajaxJsonRequestDerived(url, 'post', jsonData, IE_DailyProductQty_GetPU, AjaxFailResult);
+            }
+        });
+
+
+        function IE_DailyProductQty_GetPU(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+            } else {
+                $ddPU.empty();
+                var puList = data.tableData;
+                var optionStr = "<option value='' >--Please Select--</option>";
+                for (var i = 0; i < puList.length; i++) {
+                    optionStr = optionStr + "<option value='" + puList[i] + "' >" + puList[i] + "</option>";
+                }
+                var option = $(optionStr);
+                $ddPU.append(option);
+
+            }
+        }
+
+
+        $btnQuery.click(function () {
+            var Date = "";
+            var PU = "";
+            var Line = "";
+            var Shift = "";
+            var Model = "";
+            var WO = "";
+            Date = $txtDT.val().trim();
+            PU = $ddPU.val().trim();
+            
+            if (PU == "") {
+                ErrorMsg("Plese choose PU");
+                return;
+            }
+            if (Date == "") {
+                ErrorMsg("Please choose date");
+                return;
+            }
+            var url = baseUrl + "/Query/IE_ModelCheck_Query";
+            jsonData = { "Date": Date, "PU": PU  };
+            ajaxJsonRequestDerived(url, 'post', jsonData, IE_ModelCheck_Query, AjaxFailResult);
+        });
+
+
+
+        function IE_ModelCheck_Query(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+            } else {
+                $tbResultTable.bootstrapTable('load', data.tableData);
+                var dataLen = data.tableData.length;
+                var sum = 0;
+                for (var i = 0; i < dataLen; i++) {
+                    sum = sum + data.tableData[i].QTY;
+                }
+                OKMsg("一共(" + dataLen + ")行" );
+            }
+
+        }
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href= ' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350> 请重新登录 </a>')
+
+
+                    tb_init('a.thickbox, area.thickbox, input.thickbox');
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+
+        $btnToExcel.click(function () {
+            $tbResultTable.tableExport({
+                type: 'excel',
+                escape: 'false',
+                fileName: 'IE_ModelCheck',
+                tableName: 'IE_ModelCheck',
+                ignoreColumn: [0, 1],
+                worksheetName: ['IE_ModelCheck']
+            })
+        });
+        //初始化table:
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式
+
+            clickToSelect: true,
+            search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            //showFooter: true,
+            columns: [
+                {
+                    title: 'Item<br />',
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'TransDate',
+                    title: 'TransDate'
+                }, {
+                    field: 'Mode',
+                    title: 'Mode',
+                    sortable: true
+                }, {
+                    field: 'Line',
+                    title: 'Line',
+                    sortable: true,
+
+                }, {
+                    field: 'Shift',
+                    title: 'Shift',
+                }, {
+                    field: 'Model',
+                    title: 'Model',
+                } , {
+                    field: 'QTY',
+                    title: 'QTY',
+                }
+                , {
+                    field: 'ModelBu',
+                    title: 'ModelBu',
+                } 
+            ],
+        });
+    });
+</script>  
+
+ 
+<h5><a href="@baseUrl" >首页</a>>>查询>>未定义工时的料号</h5>
+ 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-search"></span> IE_ModelCheck</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row"> 
+                    <label>&nbsp;&nbsp;&nbsp;Date: </label> 
+                     <input type="text" id="dt" placeholder="Please choose date"  ><div id="dd"></div>     
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <label>PU: </label> 
+                        @if (ViewData["PUListItem"] != null)
+                        { 
+                            @Html.DropDownList("PU", ViewData["PUListItem"] as SelectList, "--Please Select--", new { @id = "PU",@class="form-control" })
+                        }
+                        
+                    </div>     
+                     
+                </div> 
+                <div class="row"> 
+                    <div class="col-md-2">
+                        <input type="button" value="Reset" class="btn btn-primary btn-sm " id="Reset" /> 
+                    </div>
+                     <div class="col-md-2">
+                        <input type="button" value="Query" class="btn btn-primary btn-sm " id="Query" /> 
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>IE_ModelCheck Detail</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="Download Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+ 
+ 
+
+
+
+
+
+

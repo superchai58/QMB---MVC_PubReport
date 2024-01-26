@@ -1,0 +1,44 @@
+﻿  .header {
+            background-color: rgb(16,101,180);
+            height: 72px;
+            margin: 0;
+        }
+   .img {
+            
+            background-image:url(../Images/logo.png)
+        }
+
+        .spn0 {
+            position: relative;
+            top: 20px;
+            left: 20px;
+            display: block;
+            font: bold 32px "微软雅黑";
+            color: white;
+        }
+        .spn3 {
+            position: relative;
+            font: bold /50px,"微软雅黑";
+            color: white;
+            margin-left:80%;
+        }
+             
+        .spn1 {
+            position: relative;
+            font: bold /50px,"微软雅黑";
+            color: white;
+            margin: 20px 0px 10px 2%;
+        }
+
+        .spn2 {
+            position: relative;
+            font: bold /50px,"微软雅黑";
+            color: white;
+            margin: 20px 0px 10px 2%;
+        }
+    .spn4 {
+         position: relative;
+        font: bold /50px,"微软雅黑";
+        color: white;
+        margin-left:50%;
+    }

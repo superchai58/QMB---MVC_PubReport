@@ -1,0 +1,52 @@
+﻿<!DOCTYPE html>
+<html lang="zh">
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title --Pub Report</title>
+        <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
+        <meta name="viewport" content="width=device-width" />
+   
+        @Scripts.Render("~/jquery.js")                 
+        @Scripts.Render("~/Pub_Report.js")     
+        @Styles.Render("~/CSS.css")
+    
+    </head>
+
+    <body>
+       @{   
+           var request =   HttpContext.Current.Request;
+           var requestScheme= request.Url.Scheme;
+           var requestAuth= request.Url.Authority;
+           var path = HttpRuntime.AppDomainAppVirtualPath;
+           var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+    }
+     @Html.Partial("_Menu")
+    <div class ="Cotent">
+        @RenderBody()      
+       
+    </div>
+ 
+ @*<a href="~/Query/IE_DailyRpt_ToMIS_log">测试</a>*@
+<hr style="margin-top:8%"/>
+ <div id="Content" style="margin-top:3%">
+
+ </div>
+
+
+    <script>
+        var baseUrl = '@baseUrl';
+         
+        function menuClick(url)
+        {
+            
+            $('#Content').html("");
+            $('#Content').load(url);
+        }
+
+
+    </script>
+    </body>
+    
+    
+</html>

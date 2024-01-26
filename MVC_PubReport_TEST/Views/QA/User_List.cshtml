@@ -1,0 +1,160 @@
+﻿ @using MVC_PubReport.Models.User
+@model IEnumerable<TUser> 
+@{
+    ViewBag.Title = "User_List";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+    var QueryStr = request.Url.Query;
+    
+    TUser User = Session["Pub_Report_User"] as TUser;
+    var UserRole = "";
+    if (User != null)
+    {
+        UserRole = User.UserRole;
+    }
+
+
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }
+}
+<script>
+    var QueryStr = '@QueryStr'; 
+    var UserRole = '@UserRole'; 
+    $(function () {
+        $('select').comboSelect();
+    });
+</script>
+  
+<script src="~/Scripts/xlsx.full.min.js"></script>  
+<script src="~/Scripts/PUB_QITS_UserList.js"></script>  
+
+<h5><a href="@baseUrl" >首页</a>>>QA>>人员信息维护</h5>
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>User_List详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button> 
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="新增" id="Add" >  
+                        <i class="glyphicon glyphicon-plus"></i>  
+                    </button> 
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+ 
+@*<span id="demo"></span>*@
+<div class="modal fade" id="AddInfo" tabindex="-1" role="scrollbar" data-backdrop="static" >  
+            <div class="modal-dialog" role="scrollbar">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>编辑人员信息</h3>  
+                    </div>  
+                    <div class="modal-body">  
+
+                        <div class="row">
+                            <label for="CompanyCode">公司代码:
+                                @if (ViewData["CompanyCode"] != null)
+                                { 
+                                    @Html.DropDownList("CompanyCode", ViewData["CompanyCode"] as SelectList, "--Please Select--", new { @id = "CompanyCode",@class="form-control" })
+                                }else
+                                {
+                                  <select id="CompanyCode" class="form-control" >
+                                    <option value ="">--Please Select--</option>
+                                </select>
+                                }  
+                            </label>
+                            <label for="DepartMent">DepartMent:
+                                
+                                <select id="DepartMent" class="form-control" >
+                                    <option value ="">--Please Select--</option>
+                                    <option value ="QM">QM</option>
+                                    <option value ="PE-EE">PE-EE</option>
+                                    <option value ="PE-SW">PE-SW</option>
+                                    <option value ="PE-ME">PE-ME</option>
+                                    <option value ="Other">其他</option>
+                                </select>
+
+                            </label>
+
+                        </div>
+                        <div class="row">
+                             <label for="Leader">Leader:                               
+                                <select id="Leader" class="form-control" >
+                                    <option value ="">--Please Select--</option>
+                                </select>
+                            </label>
+                             <label for="UserRole">角色: 
+                               <select id="UserRole" class="form-control" >
+                                   <option value ="">--Please Select--</option>
+                                   <option value="0">Leader</option>
+                                   <option value="1">助理</option>
+                                   <option value="2">工程师</option>
+                                </select>
+                           </label>
+                        </div>
+
+                         <div class="row">
+
+                            <label for="UserID">员工号:<input type="text" id="UserID" name="UserID" class="form-control" /></label>
+                           <label for="UserName">姓名:<input type="text" id="UserName" name="UserName"  class="form-control" /></label> 
+                          
+                        </div>
+                         <div class="row">
+                             <label for="Tel">Tel:<input type="text" id="Tel" name="CompayLocal" class="form-control"   /></label>
+                             <label for="Email">Email:<input type="text" id="Email" name="Email" class="form-control"   /></label>
+                             
+                        </div>
+         
+                        <div  class="row">
+                            <label id="message-error-modal" class="message-error"></label>
+                            <label id="message-success-modal" class="message-success"></label>
+                        </div>
+                         <div class="row">
+                            <input type="button" value="重置" class="btn btn-primary btn-sm" id="reset" />
+                            <input type="button" value="保存" class="btn btn-primary btn-sm" id="save" />
+                            <input type="button" value="关闭" class="btn btn-primary btn-sm" id="close" /> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+ </div>
+
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

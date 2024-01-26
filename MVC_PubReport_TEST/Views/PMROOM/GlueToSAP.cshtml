@@ -1,0 +1,317 @@
+﻿@{
+    ViewBag.Title = "GlueToSAP";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+
+    var QueryStr = request.Url.Query;
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }
+   
+} 
+<script>
+    $(document).ready(function () { 
+ 
+        var $btnSave = $('#save');       
+        var $btnQuery = $('#Query');
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+        var $tbResultTable = $('#ResultTable');
+       
+
+        var $ddPU = $('#ddPU');
+        var $ddLine = $('#ddLine');
+        var $ddCompPN = $('#ddCompPN');
+        var $txtQty = $('#txtQty');
+        var $txtDT = $('#txtDT');
+
+        $ddPU.change(function () {
+            var PU;
+            PU = $ddPU.val();
+            if (PU == "")
+            {
+                ErrorMsg("Please select PU");
+                return;
+            }
+            var url = baseUrl + "/PMROOM/GetLineByPU";
+            jsonData = { "PU": PU };
+            ajaxJsonRequestDerived(url, 'post', jsonData, funGetLineByPU, AjaxFailResult); 
+        });
+        
+        function funGetLineByPU(data)
+        {
+
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+            } else {
+                $ddLine.empty();
+                var LineList = data.tableData;
+                var optionStr = "<option value='' >--Please Select--</option>";
+                for (var i = 0; i < LineList.length; i++) {
+                    optionStr = optionStr + "<option value='" + LineList[i] + "' >" + LineList[i] + "</option>";
+                }
+                var option = $(optionStr);
+                $ddLine.append(option);
+
+            }
+        }
+
+        $ddLine.change(function () {
+
+            var PU;
+            PU = $ddPU.val();
+            if (PU == "") {
+                ErrorMsg("Please select PU");
+                return;
+            }
+            var url = baseUrl + "/PMROOM/GetCompPN";
+            jsonData = { "PU": PU };
+            ajaxJsonRequestDerived(url, 'post', jsonData, funGetCompPN, AjaxFailResult);
+        });
+
+        function funGetCompPN(data) {
+
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+            } else {
+                $ddCompPN.empty();
+                var CompPNList = data.tableData;
+                var optionStr = "<option value='' >--Please Select--</option>";
+                for (var i = 0; i < CompPNList.length; i++) {
+                    optionStr = optionStr + "<option value='" + CompPNList[i] + "' >" + CompPNList[i] + "</option>";
+                }
+                var option = $(optionStr);
+                $ddCompPN.append(option);
+
+            }
+        }
+        $btnSave.click(function () {
+            var PU;
+            var Line;
+            var CompPN;
+            var Qty; 
+            PU = $ddPU.val();
+            Line = $ddLine.val();
+            CompPN = $ddCompPN.val();
+            Qty = $txtQty.val().trim();
+
+            if (PU == "" || Line == "" || CompPN == "" || Qty == "") {
+                ErrorMsg("PU,Line,ComPpn,Qty is empty");
+                return;
+            }
+            var url = baseUrl + "/PMROOM/GlueRecord";
+            jsonData = { "PU": PU, "Line": Line, "CompPN": CompPN, "Qty": Qty };
+            ajaxJsonRequestDerived(url, 'post', jsonData, funGlueRecord, AjaxFailResult);
+           
+         
+        })
+        function funGlueRecord(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+            } else {
+                OKMsg("Record OK !")
+            }
+        }
+        $btnQuery.click(function () {
+            var dt;
+            dt = $txtDT.val().trim();
+            var url = baseUrl + "/PMROOM/GlueQuery";
+            jsonData = { "DateTime": dt  };
+            ajaxJsonRequestDerived(url, 'post', jsonData, funGlueQuery, AjaxFailResult);
+        })
+
+        function funGlueQuery(data)
+        {
+            $tbResultTable.bootstrapTable('load', data.tableData);
+            var dataLen = data.tableData.length; 
+            OKMsg("一共(" + dataLen + ")行");
+        }
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href="' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350  > 请重新登录 </a>')
+
+
+                    tb_init('a.thickbox, area.thickbox, input.thickbox');
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+ 
+        //初始化table end
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式 
+            clickToSelect: true,
+            //search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            columns: [ 
+                { 
+                    title: 'Item<br />', 
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'MANDT',
+                    title: 'MANDT', 
+                }, {
+                    field: 'ZREFID',
+                    title: 'ZREFID', 
+                }, {
+                    field: 'ZITEM',
+                    title: 'ZITEM', 
+                }, {
+                    field: 'WERKS',
+                    title: 'WERKS', 
+                }, {
+                    field: 'KOSTL',
+                    title: 'KOSTL', 
+                }, {
+                    field: 'LGORT',
+                    title: 'LGORT', 
+                }, {
+                    field: 'MATNR',
+                    title: 'MATNR', 
+                }, {
+                    field: 'MENGE',
+                    title: 'MENGE', 
+                }, {
+                    field: 'MEINS',
+                    title: 'MEINS', 
+                }, {
+                    field: 'FLAG',
+                    title: 'FLAG',  
+                }, {
+                    field: 'MBLNR',
+                    title: 'MBLNR',
+                }, {
+                    field: 'ZEILE',
+                    title: 'ZEILE',
+                }, {
+                    field: 'MJAHR',
+                    title: 'MJAHR',
+                }, {
+                    field: 'MESSAGE',
+                    title: 'MESSAGE',
+                }, {
+                    field: 'AUFNR',
+                    title: 'AUFNR',
+                }, {
+                    field: 'Line',
+                    title: 'Line',
+                }, {
+                    field: 'IndateTime',
+                    title: 'IndateTime',
+                }, {
+                    field: 'FinishDateTime',
+                    title: 'FinishDateTime',
+                }, {
+                    field: 'UID',
+                    title: 'UID',
+                }],
+
+        });
+    })
+</script>  
+<h5><a href="@baseUrl" >首页</a>>>PMRoom>>GlueToSAP</h5>
+ 
+
+ 
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> Mail</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS" id="EditModel">  
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <label>PU: 
+                                    <select id="ddPU" name="Result" class="form-control">
+                                        <option value="">--Please Select--</option>
+                                        <option value="PU1">PU1</option>
+                                        <option value="PU4">PU4</option>
+                                        <option value="PU4-STN">PU4-STN</option>
+                                        <option value="PU5">PU5</option>
+                                        <option value="PU10">PU10</option>
+                                        <option value="JON">JON</option>
+                                    </select> 
+                                </label> 
+                            </div>   
+                            <div class="col-md-6">
+                                <label>Line:
+                                  <select id="ddLine" name="Result" class="form-control">
+                                        <option value="">--Please Select--</option> 
+                                    </select> 
+                                </label> 
+                            </div>                          
+                         </div>
+
+                        <div class="row">
+                             <div class="col-md-6 ">
+                                <label>CompPN :
+                                     <select id="ddCompPN" name="Result" class="form-control">
+                                        <option value="">--Please Select--</option> 
+                                    </select>  
+                                </label>  
+                            </div>  
+                            <div class="col-md-6 ">
+                                <label>Qty :<input type="text" class="form-control" id="txtQty"  />
+                                </label>  
+                            </div> 
+                        </div>   
+                        <div class="row"> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="提交" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div> 
+                </div> 
+            </div>
+        </div> 
+
+     </div>
+    <div class="panel panel-success">
+         <div id="toolbar" class="toolbar">  
+            <input type="text" id="txtDT"/>
+            <div class="btn-group">  
+                <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  /> 
+  
+            </div>  
+        </div> 
+        <table class="table table-hover"  id="ResultTable"  >
+ 
+        </table>
+                   
+      
+    </div>
+             
+                     
+    
+   
+ 
+ 

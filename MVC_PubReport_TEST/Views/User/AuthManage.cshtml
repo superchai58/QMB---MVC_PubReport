@@ -1,0 +1,86 @@
+﻿@{
+    ViewBag.Title = "用户权限管理";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+@using MVC_PubReport.Models.User;
+@{    
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+      
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+@model IEnumerable<TUser> 
+<link href="~/CSS/multi-select.css"  rel="stylesheet" type="text/css">
+
+<script src="~/Scripts/jquery.multi-select.js" type="text/javascript"></script>
+<script src="~/Scripts/Pub_Report_AuthManage.js"></script>  
+<h5><a href="@baseUrl" >首页</a>>>系统管理员>>权限管理</h5>
+ 
+
+<form class="form-inline" role="form" id ="UserInfo">
+    <div @*class="row "*@ style="margin-left:40%">
+        <label id="message-error" class="message-error">@ViewBag.Message</label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"> </span> 用户权限管理</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS">
+                        <div class="row">
+                            <label for="txtUserID">工  号:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp</label>
+                            <input type="text" id="txtUserID" name="UserID"  />
+                        </div>
+                        <div class="row">
+                            <select id='multiAuth' multiple='multiple'   >
+                            </select>
+                        </div>
+                        <div class="row"style="margin-left:20%">                            
+                            <input type="button" value="保存" class="btn btn-primary btn-lg" id="Save" disabled="disabled" />
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 divCSS">
+                        <h3 >已拥有的权限</h3><br />
+                        <div id="toolbar" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                                <i class="glyphicon glyphicon-arrow-down"></i>  
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                        <table class="table table-hover"  id="ResultTable"  >
+ 
+                        </table>
+                    </div>                 
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+    <div class="modal-dialog" role="alertdialog">  
+                
+        <div class="modal-content">  
+            <div class="modal-header">  
+                <h3>恭喜您，权限加入成功，<span id="Timer" style="font-size:18px">3</span>s后会自动跳转到主页</h3>  
+            </div>  
+            <div class="modal-body">  
+                <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+            </div>
+        </div>
+    </div>
+</div>
+ 

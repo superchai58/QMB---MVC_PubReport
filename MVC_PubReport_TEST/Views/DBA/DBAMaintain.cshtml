@@ -1,0 +1,519 @@
+﻿@{
+    ViewBag.Title = "DB监控维护";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+    Layout = null;
+}
+@using MVC_PubReport.Models.IE
+ 
+@model IEnumerable<TIE_DepartMent> 
+<script src="~/Scripts/Pub_Report_DBA.js"></script>  
+<h5><a href="@baseUrl" >首页</a>>>DB监控维护>>DB监控维护</h5>
+ 
+
+<form class="form-inline" role="form" >
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> 
+                <a data-toggle="collapse" data-parent="#accordion" 
+				   href="#collapseOne" style="color:blue">
+                    <span class="glyphicon glyphicon-th-list"> </span> 
+                        点我维护 LinkServer (Check LinkServer)
+              
+				</a>
+            </h3>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse">
+			<div class="panel-body">
+				<div class="row">
+                    <div class="col-md-4 divCSS">
+                          
+                            <label>本地IP:    &nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                      
+                            <input type="text" id="LocalIP" class="form-control" value="10.97.1.12" disabled="disabled" > </label>  
+                                                 
+                         
+                        
+                            <label>远程IP:&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                            <input type="text" id="RemoteIP" class="form-control" >  </label>
+                       
+                        
+                            <label>登录账号:  &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<input type="text" id="LoginUser" class="form-control" ></label>
+                       
+                       
+                            <label>登录密码:  &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="PW" class="form-control" ></label>
+                      
+                            <label>描述:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" id="ServerDesc" class="form-control" ></label>
+                            <div class="row"> 
+                                <div class="col-md-1">
+                         
+                                </div>
+                                <div class="col-md-2">
+                                    <input type="button" value="重置" class="btn btn-primary btn-sm " id="ResetLinkServer" /> 
+                                </div>
+                                    <div class="col-md-2">
+                                    <input type="button" value="创建LinkServer" class="btn btn-primary btn-sm " id="CreateLinkServer" /> 
+                                </div>
+                   
+                            </div>
+                        </div> 
+                    <div class="col-md-1"></div>
+                    <div class="col-md-5 divCSS">
+                        <h3 >详细信息显示</h3><br />
+                        <div id="toolbar" class="toolbar">  
+                            <div class="btn-group">  
+                                <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowLinkServer"  data-placement="top" title="显示所有资料" >  
+                                    显示所有信息 
+                                </button>  
+                                <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelLinkServer" >  
+                                    <i class="glyphicon glyphicon-trash"></i>  
+                                </button>  
+                            </div>  
+                        </div> 
+                        <table class="table table-hover"  id="ResultTableLinkServer"  >
+ 
+                        </table>
+                    </div> 
+                </div>
+                   
+               
+			</div>
+		</div>
+    </div>  
+
+
+    <div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title"> 
+            <a data-toggle="collapse" data-parent="#accordion" 
+				href="#collapseSVR_Define" style="color:blue">
+                <span class="glyphicon glyphicon-th-list"> </span> 
+                    点我维护 SVR_Define (ChkDBLock/Chk_sDayOfYear/ChkMailQueue)
+                    
+			</a>
+        </h3>
+    </div>
+  @*  <div id="collapseChkDBLock" class="panel-collapse collapse">*@
+      <div id="collapseSVR_Define" class="panel-collapse collapse">
+		<div class="panel-body">
+			<div class="row">
+                <div class="col-md-3 divCSS">
+                          
+                        <label>BU:&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp                     
+                        <input type="text" id="BU" class="form-control"    > </label> 
+                        
+                        <label>BUType:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                        <input type="text" id="BUType" class="form-control" >  </label>                      
+                        
+                        <label>Customer:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<input type="text" id="Customer" class="form-control" ></label>
+                                              
+                        <label>CName:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="CName" class="form-control" ></label>
+                      
+                        <label>Item:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+                             @*<input type="text" id="Item" class="form-control" value="ChkDBLock" disabled="disabled" >*@
+                            <select id ="Item" class="form-control">
+                                <option value="">--Please Select--</option>
+                                <option value="ChkDBLock">ChkDBLock</option>
+                                <option value="ChkMailQueue">ChkMailQueue</option>
+                                <option value="Chk_sDayOfYear">Chk_sDayOfYear</option>
+                           @*     <option value="ChkDBLock">ChkDBLock</option>*@
+                                
+                                
+                            </select>
+
+                        </label>
+                         <label>Context:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" id="Context" class="form-control" ></label>
+                         <label>IP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" id="IP" class="form-control" ></label>
+                         <label>DBName:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp  <input type="text" id="DBName" class="form-control" ></label>
+                         <label>Description:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" id="Description" class="form-control" ></label>
+                        <div class="row"> 
+                            <div class="col-md-1">
+                         
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" value="重置" class="btn btn-primary btn-sm " id="ReseSVR_Define" /> 
+                            </div>
+                                <div class="col-md-2">
+                                <input type="button" value="保存" class="btn btn-primary btn-sm " id="CreateSVR_Define" /> 
+                            </div>
+                   
+                        </div>
+                    </div> 
+                <div class="col-xs-1"></div>
+                <div class="col-md-8 divCSS">
+                    <h3 >详细信息显示</h3><br />
+                    <div id="toolbarSVR_Define" class="toolbar">  
+                        <div class="btn-group">  
+                           @* <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowSVR_Define"  data-placement="top" title="显示所有资料" >  
+                                 显示所有信息
+                            </button>  *@
+                            <select id ="ShowSVR_Define" class="form-control">
+                                <option value="">--Please Select--</option>
+                                <option value="ChkDBLock">显示ChkDBLock信息</option>
+                                <option value="ChkMailQueue">显示ChkMailQueue信息</option>
+                                <option value="Chk_sDayOfYear">显示Chk_sDayOfYear信息</option>
+                                @*<option value="ChkDBLock">显示ChkDBLock信息</option>*@
+                                
+                            </select>
+
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelSVR_Define" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="ResultTableSVR_Define"  >
+ 
+                    </table>
+                </div> 
+            </div>
+		</div>
+	</div>
+</div> 
+
+    <div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title"> 
+            <a data-toggle="collapse" data-parent="#accordion" 
+				href="#collapseMainDB_SysConfig" style="color:blue">
+                <span class="glyphicon glyphicon-th-list"> </span> 
+                    点我维护 MainDB_SysConfig (Check Witness)
+                    
+			</a>
+        </h3>
+    </div>
+ 
+      <div id="collapseMainDB_SysConfig" class="panel-collapse collapse">
+		<div class="panel-body">
+			<div class="row">
+                <div class="col-md-3 divCSS">
+                          
+                        <label>BU:&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp                     
+                        <input type="text" id="MainDB_SysConfig_BU" class="form-control"    > </label> 
+                        
+                        <label>BUType:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+                        <input type="text" id="MainDB_SysConfig_Type" class="form-control" >  </label>                      
+                        
+                                                                      
+                        <label>ServerName:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="ServerName" class="form-control" ></label>
+                      
+                        <label>ServerType:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+ 
+                            <select id ="ServerType" class="form-control">
+                                <option value="">--Please Select--</option>
+                                <option value="DB Server">DB Server</option>
+                                <option value="File Server">File Server</option> 
+                            </select>
+
+                        </label>
+                    <label>ServerIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;<input type="text" id="ServerIP" class="form-control" ></label>
+
+                         <label>ClusterIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp  <input type="text" id="ClusterIP" class="form-control" ></label>
+                         <label>ListenIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  <input type="text" id="ListenIP" class="form-control" ></label>
+                         <label>Description:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp   <input type="text" id="MainDB_SysConfig_Description" class="form-control" ></label>
+                        <div class="row"> 
+                            <div class="col-md-1">
+                         
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" value="重置" class="btn btn-primary btn-sm " id="ReseShowMainDB_SysConfig" /> 
+                            </div>
+                                <div class="col-md-2">
+                                <input type="button" value="保存" class="btn btn-primary btn-sm " id="CreateMainDB_SysConfig" /> 
+                            </div>
+                   
+                        </div>
+                    </div> 
+                <div class="col-xs-1"></div>
+                <div class="col-md-8 divCSS">
+                    <h3 >详细信息显示</h3><br />
+                    <div id="toolbarMainDB_SysConfig" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowMainDB_SysConfig"  data-placement="top" title="显示所有资料" >  
+                                 显示所有信息
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelMainDB_SysConfig" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="rsMainDB_SysConfig"  >
+ 
+                    </table>
+                </div> 
+            </div>
+		</div>
+	</div>
+</div> 
+
+    <div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title"> 
+            <a data-toggle="collapse" data-parent="#accordion" 
+				href="#FileServer" style="color:blue">
+                <span class="glyphicon glyphicon-th-list"> </span> 
+                    点我维护 FileServer (Check FileServer) 
+			</a>
+        </h3>
+    </div>
+ 
+      <div id="FileServer" class="panel-collapse collapse">
+		<div class="panel-body">
+			<div class="row">
+                <div class="col-md-3 divCSS">
+                          
+                        <label>ClusterIP:&nbsp;&nbsp; &nbsp;&nbsp;&nbsp                     
+                        <input type="text" id="FileServerClusterIP" class="form-control"    > </label> 
+                        
+                        <label>IP1:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp
+                        <input type="text" id="IP1" class="form-control" >  </label>   
+                        <label>IP2:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp<input type="text" id="IP2" class="form-control" ></label>
+                        <label>ActualIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp  <input type="text" id="ActualIP" class="form-control" ></label>
+
+                      
+                        <label>Description:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="FileServerDesc" class="form-control" ></label>
+                        <div class="row"> 
+                            <div class="col-md-1">
+                         
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" value="重置" class="btn btn-primary btn-sm " id="ReseFileServer" /> 
+                            </div>
+                                <div class="col-md-2">
+                                <input type="button" value="保存" class="btn btn-primary btn-sm " id="CreateFileServer" /> 
+                            </div>
+                   
+                        </div>
+                    </div> 
+                <div class="col-xs-1"></div>
+                <div class="col-md-8 divCSS">
+                    <h3 >详细信息显示</h3><br />
+                    <div id="toolbarFileServer" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowFileServer"  data-placement="top" title="显示所有资料" >  
+                                 显示所有信息
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelFileServer" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="rsFileServer"  >
+ 
+                    </table>
+                </div> 
+            </div>
+		</div>
+	</div>
+</div> 
+
+    <div class="panel panel-success">
+    <div class="panel-heading">
+        <h3 class="panel-title"> 
+            <a data-toggle="collapse" data-parent="#accordion" 
+				href="#DBShareFolderList" style="color:blue">
+                <span class="glyphicon glyphicon-th-list"> </span> 
+                    点我维护 DBShareFolderList (Check ShareFolder) 
+			</a>
+        </h3>
+    </div>
+ 
+      <div id="DBShareFolderList" class="panel-collapse collapse">
+		<div class="panel-body">
+			<div class="row">
+                <div class="col-md-3 divCSS"> 
+                        <label>PU:&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp                     
+                        <input type="text" id="DBShareFolderListPU" class="form-control"    > </label>  
+                        <label>Type:&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp 
+                        <input type="text" id="DBShareFolderListType" class="form-control" >  </label>   
+                        <label>ServerIP:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp<input type="text" id="DBShareFolderListServerIP" class="form-control" ></label>
+                        <label>备份Server:&nbsp;&nbsp;<input type="text" id="BackUpServerIP" class="form-control" ></label>  
+                        <label>共享路径:&nbsp;&nbsp;&nbsp;&nbsp; <input type="text" id="Path" class="form-control" ></label>
+                        <label>登录账号:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="UserName" class="form-control" ></label>
+                        <label>登录密码:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="PassWord" class="form-control" ></label>
+                        <label>文件数量:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="LimitedFileNum" class="form-control" ></label>
+                        <label>文件大小:&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="LimitedFileSize" class="form-control" ></label>
+                        <div class="row"> 
+                            <div class="col-md-1">
+                         
+                            </div>
+                            <div class="col-md-2">
+                                <input type="button" value="重置" class="btn btn-primary btn-sm " id="ResetDBShareFolderList" /> 
+                            </div>
+                                <div class="col-md-2">
+                                <input type="button" value="保存" class="btn btn-primary btn-sm " id="CreateDBShareFolderList" /> 
+                            </div>
+                   
+                        </div>
+                    </div> 
+                <div class="col-xs-1"></div>
+                <div class="col-md-8 divCSS">
+                    <h3 >详细信息显示</h3><br />
+                    <div id="toolbarDBShareFolderList" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowDBShareFolderList"  data-placement="top" title="显示所有资料" >  
+                                 显示所有信息
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelDBShareFolderList" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="rsDBShareFolderList"  >
+ 
+                    </table>
+                </div> 
+            </div>
+		</div>
+	</div>
+</div> 
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> 
+                <a data-toggle="collapse" data-parent="#accordion" 
+				    href="#DBServer_LIST" style="color:blue">
+                    <span class="glyphicon glyphicon-th-list"> </span> 
+                        点我维护 DBServer_LIST (Check TableSize) 
+			    </a>
+            </h3>
+        </div>
+ 
+      <div id="DBServer_LIST" class="panel-collapse collapse">
+		<div class="panel-body">
+            <div class="divCSS">
+                <div class="row">          
+                <label class="col-md-3">BU:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="DBServer_LISTBU" class="form-control" > </label>   
+                <label class="col-md-3">Customer:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="DBServer_LISTCustomer" class="form-control" ></label>                 
+                <label class="col-md-3">ServerName:&nbsp;&nbsp;<input type="text" id="DBServer_LISTServerName" class="form-control" ></label>    
+                <label class="col-md-3">Type:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                     
+                    <select id="DBServer_LISTTYPE" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="FA">FA</option>
+                        <option value="SMT">SMT</option>
+                    </select>
+                </label>  
+            </div>   
+            <div class="row">
+                <label class="col-md-3">主服务器IP:&nbsp;&nbsp;&nbsp;<input type="text" id="DBServer_LISTIP" class="form-control" ></label>
+                <label class="col-md-3">DB密码:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="DBServer_LISTPWD" class="form-control" ></label>
+                <label class="col-md-3">DB Name:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="DBServer_LISTDBName" class="form-control" ></label> 
+       
+                <label class="col-md-3">加入可用性组:&nbsp;               
+                     <select id="IS_AlwaysOn_DB" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </label>
+                 
+            </div>  
+            <div class="row"> 
+            <label class="col-md-3">备份服务器IP:<input type="text" id="MirrorDBIP" class="form-control" ></label>  
+
+                <label class="col-md-3">负责人:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="Owner_Name" class="form-control" ></label> 
+                     <label class="col-md-3">是否是QFMS:&nbsp;&nbsp;                    
+                    <select id="IS_QFMS_DB" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </label>
+                 <label class="col-md-3">是否是主DB:&nbsp;&nbsp;&nbsp;&nbsp;
+                    <select id="IS_MAIN_DB" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </label> 
+                
+                
+            </div>                
+            <div class="row">
+                
+
+                <label class="col-md-3">是否自动砍单:
+                    <select id="IsNeed_AdjustWOQty" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </label>
+                <label class="col-md-3">是否有周别表:
+                    <select id="IsNeed_sDayOfYear" class="form-control">
+                        <option value="">--Please Select--</option>
+                        <option value="Y">Y</option>
+                        <option value="N">N</option>
+                    </select>
+                </label>
+             
+            </div>    
+               
+
+         
+           
+            <div class="row"> 
+                <div class="col-md-3">
+                         
+                </div>
+                <div class="col-md-4">
+                    <input type="button" value="重置" class="btn btn-primary btn-sm " id="ResetDBServer_LIST" /> 
+                </div>
+                    <div class="col-md-4">
+                    <input type="button" value="保存" class="btn btn-primary btn-sm " id="CreateDBServer_LIST" /> 
+                </div>
+                   
+            </div>
+            </div>
+			
+            <div class="row">
+                    
+                    <div id="toolbarDBServer_LIST" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ShowDBServer_LIST"  data-placement="top" title="显示所有资料" >  
+                                 显示所有信息
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="DelDBServer_LIST" >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="rsDBServer_LIST"  >
+ 
+                    </table>
+                </div> 
+		</div>
+	</div>
+
+
+
+</div> 
+
+</form>
+
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+ 
+ 
+
+
+
+
+
+

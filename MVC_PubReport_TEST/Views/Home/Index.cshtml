@@ -1,0 +1,78 @@
+﻿
+
+
+
+@{
+    ViewBag.Title = "Pub Report主页";
+    
+}
+@using MVC_PubReport.Models.Public;
+@model IEnumerable<TFunctionList> 
+ 
+   @{   
+       var request =   HttpContext.Current.Request;
+       var requestScheme= request.Url.Scheme;
+       var requestAuth= request.Url.Authority;
+       var path = HttpRuntime.AppDomainAppVirtualPath;
+       var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+}
+
+@*<div id='cssmenu'>
+<ul>
+@foreach (var item in Model)
+{
+    if (@item.ParentMenuId == 1)
+    { 
+        string ishasChild = UIHelper.isHasChild(item.MenuID,(List<TFunctionList>) Model ).ToString ();
+
+        if (ishasChild == "Y")
+        {
+            <li class='active has-sub'>
+                <a href='#'>@item.MenuName</a>
+                <ul>
+                    @foreach( var Parent2 in Model)
+                    {
+                        if (@item.MenuID == Parent2 .ParentMenuId)
+                        {
+                            if (UIHelper.isHasChild(Parent2.MenuID, (List<TFunctionList>)Model).ToString() == "Y")
+                            {
+                                <li class ="active has-sub">
+                                    <a href='@baseUrl@Parent2.LinkPage' >@Parent2.MenuName</a>
+                                    <ul>
+                                        @foreach(var Parent3 in Model)
+                                        {
+                                        
+                                            if (@Parent2.MenuID == Parent3.ParentMenuId )
+                                            {
+                                                <li ><a href='@baseUrl@Parent3.LinkPage'>@Parent3.MenuName</a></li>
+                                            }
+                                        }
+                                    </ul>
+                                </li>
+ 
+                            }else
+                            {
+                                <li  ><a href='@baseUrl@Parent2.LinkPage' >@Parent2.MenuName</a></li>
+                            }
+                             
+                        }
+                    }
+                    
+                </ul>
+
+            </li>
+        }else
+        {
+        <li><a href='#'>@item.MenuName</a></li>
+        }
+        
+    } 
+        
+} 
+ 
+</ul>
+</div> *@
+  
+
+
+ 

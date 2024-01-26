@@ -1,0 +1,244 @@
+﻿ @using MVC_PubReport.Models.User
+@model IEnumerable<TUser> 
+@{
+    ViewBag.Title = "QITS_CompanyCode";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+    var QueryStr = request.Url.Query;
+    TUser User = Session["Pub_Report_User"] as TUser;
+    var UserRole = "";
+    if (User != null)
+    {
+        UserRole = User.UserRole;
+    }
+    
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }  
+ }
+ 
+ 
+ <script>
+     var QueryStr = '@QueryStr';
+     var UserRole = '@UserRole';
+</script>
+  
+<script src="~/Scripts/xlsx.full.min.js"></script>  
+<script src="~/Scripts/PUB_QITS_IssueList.js"></script>  
+<script src="~/Scripts/calendar.js"></script>  
+
+<link rel="stylesheet" type="text/css" href="~/CSS/calendar.css" />
+<style type="text/css"> 
+    ul, ol, li {
+	    list-style: none;
+	    padding: 0;
+	    margin: 0;
+    
+    } 
+ 
+</style>
+ 
+@*<a href='javascript:void(0);' onclick='ShowModal(1)'  style='margin-left:5px; color:#003399'><li class='glyphicon glyphicon-pencil'></li></a> *@
+<h5><a href="@baseUrl" >首页</a>>>QA>>QITS_IssueList</h5>
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    
+   
+
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>QITS_IssueList详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button> 
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="新增" id="Add" >  
+                        <i class="glyphicon glyphicon-plus"></i>  
+                    </button> 
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+                
+            </table>
+        </div>
+    </div>
+ 
+@*<span id="demo"></span>*@
+<div class="modal fade" id="AddInfo" tabindex="-1" role="scrollbar" data-backdrop="static" >  
+            <div class="modal-dialog" role="scrollbar">  
+                
+                <div class="modal-content" style="width:1000px;height:900px" >  
+                    @*<div class="modal-header">  
+                        <h3>编辑 IssueType 信息</h3>  
+                    </div>  *@
+                    <div class="modal-body">  
+
+                          <div class="panel panel-success">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>编辑QITS_IssueList  </h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <label for="Model" class="col-md-2">广达机种: 
+                                            @*<input type="text" id="Model" name="Model" class="form-control" />*@
+                                            @if (ViewData["Model"] != null)
+                                                { 
+                                                    @Html.DropDownList("Model", ViewData["Model"] as SelectList, "--Please Select--", new { @id = "Model",@class="form-control" })
+                                                }
+                                             else
+                                                {
+                                                    <select id="Model" class="form-control" >
+                                                        <option value ="">--Please Select--</option>
+                                                    </select>
+                                                }
+                                        </label>
+                
+
+                                        <label for="IssueCategory" class="col-md-2">IssueCategory:  
+                                            @*<input type="text" id="IssueCategory" name="IssueCategory" class="form-control" />*@
+                                            <select id="IssueCategory" class="form-control">
+                                                <option value ="">--Please Select--</option>
+                                                <option value ="ACOS">ACOS</option>
+                                                <option value ="LCOS">LCOS </option>
+                                                <option value ="OBA">OBA</option>
+                                                <option value ="OBE">OBE</option>
+                                                <option value ="ORT">ORT</option>
+                                                <option value ="NPI">NPI</option>
+                                                <option value ="客验">客验</option>                        
+                        
+                                            </select>
+                                        </label>
+
+                                        <label for="IssueType" class="col-md-2">IssueType:  
+                                            @*<input type="text" id="IssueType" name="Line" class="form-control" />*@
+                                             @if (ViewData["IssueType"] != null)
+                                                { 
+                                                    @Html.DropDownList("IssueType", ViewData["IssueType"] as SelectList, "--Please Select--", new { @id = "IssueType",@class="form-control" })
+                                                }
+                                             else
+                                                {
+                                                    <select id="IssueType" class="form-control" >
+                                                        <option value ="">--Please Select--</option>
+                                                    </select>
+                                                }
+                                        </label>
+
+                                        <label for="Status" class="col-md-2">状态: 
+                                            <select id="Status" class="form-control" required="required" >
+                                                <option value ="">--Please Select--</option>
+                                                <option value ="Open">Open</option>
+                                                <option value ="Ongoing">Ongoing</option>
+                                                <option value ="Close">Close</option>
+                                            </select>
+                                        </label>
+                                        <label for="ISHoldSN" class="col-md-2">是否Hold货: 
+                                            @*<input type="text" id="ISHoldSN" name="ISHoldSN" class="form-control" />*@
+                                            <select id="ISHoldSN" class="form-control" >
+                                                <option value ="">--Please Select--</option>
+                                                <option value ="Y">Y</option>
+                                                <option value ="N">N</option>
+                                            </select>
+                                        </label>
+                                    </div>
+
+                                    <div class="row">
+                                        <label for="HoldSNQty" class="col-md-2">Hold货数量:
+                                            <input type="text" id="HoldSNQty" name="Line" class="form-control" />
+                                        </label> 
+                                        <label for="Line" class="col-md-2">线别: 
+                                            <input type="text" id="Line" name="Line" class="form-control" required="required" />
+                                        </label>
+                                        <label for="ResponsibilityCategory" class="col-md-2">责任类别:
+                                            <input type="text" id="ResponsibilityCategory" name="ResponsibilityCategory" class="form-control" />
+                                        </label>  
+                                        <label for="Yield" class="col-md-2">不良率: 
+                                            <input type="text" id="Yield" name="Line" class="form-control" />
+                                        </label> 
+                                         <label for="LineOwner" class="col-md-2">组长:
+                                            <input type="text" id="LineOwner" name="LineOwner" class="form-control" required="required" />
+                                        </label> 
+                                    </div> 
+                                    <div class="row"> 
+                                         <label for="PEOwner" class="col-md-2">PE负责人:
+                                             <input type="text" id="PEOwner" name="Line" class="form-control" />
+                                        </label> 
+                                         <label for="QMOwner" class="col-md-2">QM负责人: 
+                                            <input type="text" id="QMOwner" name="QMOwner" class="form-control" disabled="disabled" />
+                                        </label>
+                                        <label for="IssueDate" style="margin-left:12px" >Issue发生时间:                
+                                            <div >
+                                                <input type="text" id="IssueDate" placeholder="请选择日期"  autocomplete="off" style="width:100%" >
+                                                <div id="ddIssueDate"></div>                         
+                                            </div>
+                                        </label>
+                                         <label for="ScheduleDate"  style="margin-left:5%">预计完成时间:                
+                                            <div >
+                                                <input type="text" id="ScheduleDate" placeholder="请选择日期"  style="width:100%" autocomplete="off" >
+                                                <div id="ddScheduleDate"></div>                         
+                                            </div>
+                                        </label>
+               
+                                    </div>
+
+       
+                                    <div class ="row">
+                                        <label for="RootCasuse" class="col-md-8">RootCasuse: 
+                                            <textarea class="form-control" rows="3" id="RootCasuse" name="RootCasuse" ></textarea> 
+                                        </label> 
+                                    </div>
+                                     <div class ="row">
+                                         <label for="ActionDesc"  class="col-md-8">ActionDesc: 
+                                             <textarea class="form-control" rows="3" id="ActionDesc" name="ActionDesc" ></textarea> 
+                                        </label> 
+                                    </div>
+                                     
+                       
+                                    <div  class="row">
+                                        <label id="message-error-modal" class="message-error"></label>
+                                        <label id="message-success-modal" class="message-success"></label>
+                                    </div>
+                                    <div class="row">
+                                        <label class="col-md-2"></label>
+                                        <input type="button" value="重置" class="btn btn-primary btn-sm" id="reset" /> 
+                                        <input type="button" value="保存" class="btn btn-primary btn-sm" id="save" />
+                                        @*<input type="button" value="更新" class="btn btn-primary btn-sm" id="Update" />*@
+                                        <input type="button" value="关闭" class="btn btn-primary btn-sm" id="close" /> 
+                                    </div>
+                                </div> 
+           
+        
+                            </div> 
+                   
+                    </div>
+                </div>
+            </div>
+ </div>
+
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 

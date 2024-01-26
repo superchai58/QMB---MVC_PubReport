@@ -1,0 +1,78 @@
+﻿@{
+    ViewBag.Title = "Login";
+}
+@{
+    Layout = null;
+}
+
+<html>
+ <head id="Head1" >
+        <title>Pub Report Login</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />        
+        <script type="text/javascript" src="../Scripts/jquery-latest.min.js"></script>
+        <script src="../Scripts/bootstrap.js"></script>
+        <script src="../Scripts/bootstrap-table.js"></script>
+        <script src="../Scripts/bootstrap-table-editable.js"></script>
+        <script src="../Scripts/bootstrap-editable.js"></script>  
+         <script src="../Scripts/QMSSDK.js"></script> 
+        <script src="../Scripts/jquery.cookie.js"></script>  
+         
+        <script src="../Scripts/Pub_Report.js"></script>  
+
+        <link rel="stylesheet" type="text/css" href="../CSS/style.css" />
+        <link rel="stylesheet" type="text/css" href="../CSS/bootstrap.min.css" />
+    </head>
+
+    <body style="height:50%">
+        <div class ="Middle"  >
+            <div class="header" >
+                <label     id="lblMsg"> @ViewBag.Message</label>
+                <br />
+                @*<span class="leftSpan"><a>非域账号登录</a></span>*@
+            </div>   
+        
+           <form id="Login"class="Login"  >
+                 <div class="input-group input-group-lg">    
+                                  
+                     <input type="text" name="UserID" id="UserID"  class="form-control"  placeholder="请输入用户工号" 
+                         style="background:url(../CSS/Images/User_blue_32px.png) left no-repeat; padding: 0px 35px;"    />
+                 </div>        
+ 
+                 <div class="input-group input-group-lg">
+                     @*<span class="glyphicon glyphicon-lock form-control-feedback"></span>*@
+                     <input type="password" runat="server" name="PassWord" id="PassWord" class="form-control" placeholder="请输入密码" 
+                          style="background:url(../CSS/Images/settings_Password_32px.png) left no-repeat;padding: 0px 35px;" />
+                 </div> 
+
+                 <div>
+                     <input type="checkbox" id="autologin" />下次自动登录
+                   </div>
+                <br />
+                <div id="LoginButton" ><input type="button" id="btnLogin" value="登录" class="btn btn-block btn-primary btn-small"     /></div>  
+              
+                @*<div><span style ="margin-left:40%"><img src='~/CSS/Images/Logining.gif'  /></span></div>*@
+                <br />  
+			    <span style="color:gray;font-size:smaller">若您没有MIS域账号，请</span><a  title="立即注册"@*href="@Url.Action("RegisterUser","User")"*@ id="RegisterLink" >立即注册</a> 
+                <span style="color:gray;font-size:smaller">PUB_Report 账号 </span>  
+ 
+            </form> 
+            <br />                    
+            <hr/>
+            <span style="color:gray; margin-left:60%; font-size:smaller">有疑问请邮件联系<a href="mailto:CQ_QMS_FA@quantacn.com?subject=PUB_Report系统相关疑问">QMS</a></span> 
+        </div>
+        @{   
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+        
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+    <script>
+        var baseUrl = '@baseUrl';
+    </script>
+    </body> 
+</html>

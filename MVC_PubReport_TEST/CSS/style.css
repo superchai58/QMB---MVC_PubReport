@@ -1,0 +1,111 @@
+*{
+	margin:0;
+	padding:0;
+}
+body{
+	font-family:"Trebuchet MS", "Myriad Pro", Arial, sans-serif;
+	font-size:14px;
+	/*background:#f4f4f4 url(../Images/bg.gif) repeat top left;*/
+	color:#333;
+	text-shadow:1px 1px 1px #fff;
+	overflow-y:scroll;
+}
+h1{
+	font-size:56px;
+}
+h2{
+	font-size:20px;
+	padding:0px 0px 40px 0px;
+	color:#aaa;
+}
+h2 span{
+	color:#ffa800;
+}
+a{
+	color:#777;
+}
+a:hover{
+	color:#222;
+    cursor:pointer;
+}
+p{
+	padding:5px 0px;
+}
+.wrapper{
+	width:960px;
+	margin:20px auto;
+	min-height:550px;
+}
+.box{
+	width:49%;
+}
+.left{
+	float:left;
+}
+.right{
+	float:right;
+}
+.clear{
+	clear:both;
+}
+a.back{
+	color:#777;
+	position:fixed;
+	top:5px;
+	right:10px;
+	text-decoration:none;
+}
+
+
+/*Login 界面的CSS*/
+#lblMsg {
+    color:red;
+    margin-left: 5%;
+
+}
+.Middle {
+   width:350px;
+   height:auto;
+   margin:5% auto;
+   /*border:dashed 1px;*/
+   position:relative;
+}
+ 
+
+ .leftSpan {
+          margin-left:73%;
+    }
+
+.Login  {
+  
+    margin-top:3%;
+    margin-left:5%;
+    font-size:12px;
+}
+
+  #UserID ,#PassWord,#btnLogin{   
+            margin-bottom:15px;
+            width:325px;
+}
+
+#btnLogin {
+    background-color:#4088EB;
+    height:48px;
+    font-size:16px;
+    color:white;
+    
+}
+#chkAutoLogin {
+    margin-bottom:15px;
+}
+hr {
+    margin-left:0;
+}
+/*.register {
+    margin-left:50%;
+    text-align:right;
+}*/
+input::-ms-input-placeholder{  font-size:14px; } 
+input::-webkit-input-placeholder{font-size:14px; } 
+
+/*Login 界面的CSS End*/

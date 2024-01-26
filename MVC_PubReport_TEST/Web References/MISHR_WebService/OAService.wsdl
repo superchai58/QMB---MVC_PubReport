@@ -1,0 +1,1163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://tempuri.org/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+  <wsdl:types>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://tempuri.org/">
+      <s:element name="CheckDomainUserLogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Domain" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="UserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDomainUserLoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckDomainUserLoginResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDomainUserNameLogin">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DomainUserName" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Password" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDomainUserNameLoginResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckDomainUserNameLoginResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeesDataByEmployeesID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeesID" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="ArrayOfString">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="string" nillable="true" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetEmployeesDataByEmployeesIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeesDataByEmployeesIDResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeesDataByEmployeesIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeesID" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeesDataByEmployeesIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeesDataByEmployeesIDAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByEmployeeID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByEmployeeIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeeDataByEmployeeIDResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByEmployeeIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByEmployeeIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeeDataByEmployeeIDAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByCardNoAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeeDataByCardNoAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeeDataByCardNoAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetChineseNameByEmployeeID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetChineseNameByEmployeeIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetChineseNameByEmployeeIDResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetChineseNameByEmployeeIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetChineseNameByEmployeeIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetChineseNameByEmployeeIDAndSiteResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeIDIsExists">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeIDIsExistsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckEmployeeIDIsExistsResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeIDIsExistsBySite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckEmployeeIDIsExistsBySiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckEmployeeIDIsExistsBySiteResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentCodeByEmployeeID">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentCodeByEmployeeIDResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentCodeByEmployeeIDResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentCodeByEmployeeIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentCodeByEmployeeIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentCodeByEmployeeIDAndSiteResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByEmployeesId">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeesID" type="tns:ArrayOfString" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByEmployeesIdResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentDataByEmployeesIdResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeePictureByEmployeeIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeePictureByEmployeeIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeePictureByEmployeeIDAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:element ref="s:schema" />
+                  <s:any />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeePictureObjectByEmployeeIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="EmployeeID" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetEmployeePictureObjectByEmployeeIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetEmployeePictureObjectByEmployeeIDAndSiteResult" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByDepartmentCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByDepartmentCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentDataByDepartmentCodeResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByDepartmentCodeAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentDataByDepartmentCodeAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentDataByDepartmentCodeAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentNameByDepartmentCode">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentNameByDepartmentCodeResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentNameByDepartmentCodeResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentNameByDepartmentCodeAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetDepartmentNameByDepartmentCodeAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetDepartmentNameByDepartmentCodeAndSiteResult" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDepartmentCodeIsExists">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDepartmentCodeIsExistsResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckDepartmentCodeIsExistsResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDepartmentCodeIsExistsBySite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="DepartmentCode" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="CheckDepartmentCodeIsExistsBySiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="1" maxOccurs="1" name="CheckDepartmentCodeIsExistsBySiteResult" type="s:boolean" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVendorDataByCardNoAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="CardNo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVendorDataByCardNoAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetVendorDataByCardNoAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVendorsDataByVendorsIDAndSite">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="Site" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="VendorsID" type="tns:ArrayOfString" />
+            <s:element minOccurs="0" maxOccurs="1" name="WSKey" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetVendorsDataByVendorsIDAndSiteResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetVendorsDataByVendorsIDAndSiteResult">
+              <s:complexType>
+                <s:sequence>
+                  <s:any minOccurs="0" maxOccurs="unbounded" namespace="http://www.w3.org/2001/XMLSchema" processContents="lax" />
+                  <s:any minOccurs="1" namespace="urn:schemas-microsoft-com:xml-diffgram-v1" processContents="lax" />
+                </s:sequence>
+              </s:complexType>
+            </s:element>
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+    </s:schema>
+  </wsdl:types>
+  <wsdl:message name="CheckDomainUserLoginSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckDomainUserLogin" />
+  </wsdl:message>
+  <wsdl:message name="CheckDomainUserLoginSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckDomainUserLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckDomainUserNameLoginSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckDomainUserNameLogin" />
+  </wsdl:message>
+  <wsdl:message name="CheckDomainUserNameLoginSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckDomainUserNameLoginResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeesDataByEmployeesIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeesDataByEmployeesID" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeesDataByEmployeesIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeesDataByEmployeesIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeesDataByEmployeesIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeesDataByEmployeesIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeesDataByEmployeesIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeesDataByEmployeesIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByEmployeeIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByEmployeeID" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByEmployeeIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByEmployeeIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByEmployeeIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByEmployeeIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByEmployeeIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByEmployeeIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByCardNoAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByCardNoAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeeDataByCardNoAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeeDataByCardNoAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChineseNameByEmployeeIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetChineseNameByEmployeeID" />
+  </wsdl:message>
+  <wsdl:message name="GetChineseNameByEmployeeIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetChineseNameByEmployeeIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetChineseNameByEmployeeIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetChineseNameByEmployeeIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetChineseNameByEmployeeIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetChineseNameByEmployeeIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeIDIsExistsSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeIDIsExists" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeIDIsExistsSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeIDIsExistsResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeIDIsExistsBySiteSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeIDIsExistsBySite" />
+  </wsdl:message>
+  <wsdl:message name="CheckEmployeeIDIsExistsBySiteSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckEmployeeIDIsExistsBySiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentCodeByEmployeeIDSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentCodeByEmployeeID" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentCodeByEmployeeIDSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentCodeByEmployeeIDResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentCodeByEmployeeIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentCodeByEmployeeIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentCodeByEmployeeIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentCodeByEmployeeIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByEmployeesIdSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByEmployeesId" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByEmployeesIdSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByEmployeesIdResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeePictureByEmployeeIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeePictureByEmployeeIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeePictureByEmployeeIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeePictureByEmployeeIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeePictureObjectByEmployeeIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetEmployeePictureObjectByEmployeeIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetEmployeePictureObjectByEmployeeIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetEmployeePictureObjectByEmployeeIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByDepartmentCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByDepartmentCode" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByDepartmentCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByDepartmentCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByDepartmentCodeAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByDepartmentCodeAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentDataByDepartmentCodeAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentDataByDepartmentCodeAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentNameByDepartmentCodeSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentNameByDepartmentCode" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentNameByDepartmentCodeSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentNameByDepartmentCodeResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentNameByDepartmentCodeAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetDepartmentNameByDepartmentCodeAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetDepartmentNameByDepartmentCodeAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetDepartmentNameByDepartmentCodeAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckDepartmentCodeIsExistsSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckDepartmentCodeIsExists" />
+  </wsdl:message>
+  <wsdl:message name="CheckDepartmentCodeIsExistsSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckDepartmentCodeIsExistsResponse" />
+  </wsdl:message>
+  <wsdl:message name="CheckDepartmentCodeIsExistsBySiteSoapIn">
+    <wsdl:part name="parameters" element="tns:CheckDepartmentCodeIsExistsBySite" />
+  </wsdl:message>
+  <wsdl:message name="CheckDepartmentCodeIsExistsBySiteSoapOut">
+    <wsdl:part name="parameters" element="tns:CheckDepartmentCodeIsExistsBySiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorDataByCardNoAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVendorDataByCardNoAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorDataByCardNoAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVendorDataByCardNoAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsDataByVendorsIDAndSiteSoapIn">
+    <wsdl:part name="parameters" element="tns:GetVendorsDataByVendorsIDAndSite" />
+  </wsdl:message>
+  <wsdl:message name="GetVendorsDataByVendorsIDAndSiteSoapOut">
+    <wsdl:part name="parameters" element="tns:GetVendorsDataByVendorsIDAndSiteResponse" />
+  </wsdl:message>
+  <wsdl:portType name="OAServiceSoap">
+    <wsdl:operation name="CheckDomainUserLogin">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查用户域帐号登录（传入域名、用户名、密码）</wsdl:documentation>
+      <wsdl:input message="tns:CheckDomainUserLoginSoapIn" />
+      <wsdl:output message="tns:CheckDomainUserLoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckDomainUserNameLogin">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查用户域帐号登录（传入域名\用户名、密码）</wsdl:documentation>
+      <wsdl:input message="tns:CheckDomainUserNameLoginSoapIn" />
+      <wsdl:output message="tns:CheckDomainUserNameLoginSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesID">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号(多人)查询HR员工资料（同一个工号在多个公司存在时不能保证取得自己所期望的公司别的的员工资料）</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeesDataByEmployeesIDSoapIn" />
+      <wsdl:output message="tns:GetEmployeesDataByEmployeesIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号查询HR员工资料</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeesDataByEmployeesIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetEmployeesDataByEmployeesIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeID">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号(单人)查询HR员工资料(同一个工号在多个公司存在时不能保证取得自己所期望的公司别的的员工资料)</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeeDataByEmployeeIDSoapIn" />
+      <wsdl:output message="tns:GetEmployeeDataByEmployeeIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号查询HR员工资料</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeeDataByEmployeeIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetEmployeeDataByEmployeeIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByCardNoAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据识别卡号查询HR员工资料</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeeDataByCardNoAndSiteSoapIn" />
+      <wsdl:output message="tns:GetEmployeeDataByCardNoAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeID">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号获取员工姓名（QM存在虚拟工号的情况，不保证能取得你所期望公司别的姓名）</wsdl:documentation>
+      <wsdl:input message="tns:GetChineseNameByEmployeeIDSoapIn" />
+      <wsdl:output message="tns:GetChineseNameByEmployeeIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号获取员工姓名（传入Site、工号）</wsdl:documentation>
+      <wsdl:input message="tns:GetChineseNameByEmployeeIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetChineseNameByEmployeeIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExists">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查员工工号是否存在（如果HR中维护的公司别(Site和Comcod)不匹配可能会导致返回false）</wsdl:documentation>
+      <wsdl:input message="tns:CheckEmployeeIDIsExistsSoapIn" />
+      <wsdl:output message="tns:CheckEmployeeIDIsExistsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExistsBySite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查员工工号是否存在</wsdl:documentation>
+      <wsdl:input message="tns:CheckEmployeeIDIsExistsBySiteSoapIn" />
+      <wsdl:output message="tns:CheckEmployeeIDIsExistsBySiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeID">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号获取部门代码(同一个工号在多个公司存在时不能保证取得自己所期望的公司别的的部门)</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentCodeByEmployeeIDSoapIn" />
+      <wsdl:output message="tns:GetDepartmentCodeByEmployeeIDSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号获取部门代码</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentCodeByEmployeeIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetDepartmentCodeByEmployeeIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByEmployeesId">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号获取部门资料</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentDataByEmployeesIdSoapIn" />
+      <wsdl:output message="tns:GetDepartmentDataByEmployeesIdSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureByEmployeeIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号查询员工照片</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeePictureByEmployeeIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetEmployeePictureByEmployeeIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureObjectByEmployeeIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据员工工号查询员工照片</wsdl:documentation>
+      <wsdl:input message="tns:GetEmployeePictureObjectByEmployeeIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetEmployeePictureObjectByEmployeeIDAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCode">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据部门代码查询部门资料(同一个部门代码在多个公司存在时不能保证取得自己所期望的公司别的的部门)</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentDataByDepartmentCodeSoapIn" />
+      <wsdl:output message="tns:GetDepartmentDataByDepartmentCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCodeAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据部门代码查询部门资料</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentDataByDepartmentCodeAndSiteSoapIn" />
+      <wsdl:output message="tns:GetDepartmentDataByDepartmentCodeAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCode">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据部门代码获取部门名称(同一个部门代码在多个公司存在时不能保证取得自己所期望的公司别的的部门)</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentNameByDepartmentCodeSoapIn" />
+      <wsdl:output message="tns:GetDepartmentNameByDepartmentCodeSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCodeAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据部门代码获取部门名称</wsdl:documentation>
+      <wsdl:input message="tns:GetDepartmentNameByDepartmentCodeAndSiteSoapIn" />
+      <wsdl:output message="tns:GetDepartmentNameByDepartmentCodeAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExists">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查部门代码是否存在(只要任一个公司存在即可)</wsdl:documentation>
+      <wsdl:input message="tns:CheckDepartmentCodeIsExistsSoapIn" />
+      <wsdl:output message="tns:CheckDepartmentCodeIsExistsSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExistsBySite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">检查部门代码是否存在</wsdl:documentation>
+      <wsdl:input message="tns:CheckDepartmentCodeIsExistsBySiteSoapIn" />
+      <wsdl:output message="tns:CheckDepartmentCodeIsExistsBySiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorDataByCardNoAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据识别卡号查询厂商基础资料</wsdl:documentation>
+      <wsdl:input message="tns:GetVendorDataByCardNoAndSiteSoapIn" />
+      <wsdl:output message="tns:GetVendorDataByCardNoAndSiteSoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorsDataByVendorsIDAndSite">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">根据厂商工号查询厂商基本资料</wsdl:documentation>
+      <wsdl:input message="tns:GetVendorsDataByVendorsIDAndSiteSoapIn" />
+      <wsdl:output message="tns:GetVendorsDataByVendorsIDAndSiteSoapOut" />
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="OAServiceSoap" type="tns:OAServiceSoap">
+    <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CheckDomainUserLogin">
+      <soap:operation soapAction="http://tempuri.org/CheckDomainUserLogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDomainUserNameLogin">
+      <soap:operation soapAction="http://tempuri.org/CheckDomainUserNameLogin" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesID">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeesDataByEmployeesID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeesDataByEmployeesIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeID">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeeDataByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeeDataByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByCardNoAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeeDataByCardNoAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeID">
+      <soap:operation soapAction="http://tempuri.org/GetChineseNameByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetChineseNameByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExists">
+      <soap:operation soapAction="http://tempuri.org/CheckEmployeeIDIsExists" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExistsBySite">
+      <soap:operation soapAction="http://tempuri.org/CheckEmployeeIDIsExistsBySite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeID">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentCodeByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentCodeByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByEmployeesId">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentDataByEmployeesId" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureByEmployeeIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeePictureByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureObjectByEmployeeIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetEmployeePictureObjectByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCode">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentDataByDepartmentCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCodeAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentDataByDepartmentCodeAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCode">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentNameByDepartmentCode" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCodeAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetDepartmentNameByDepartmentCodeAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExists">
+      <soap:operation soapAction="http://tempuri.org/CheckDepartmentCodeIsExists" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExistsBySite">
+      <soap:operation soapAction="http://tempuri.org/CheckDepartmentCodeIsExistsBySite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorDataByCardNoAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetVendorDataByCardNoAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorsDataByVendorsIDAndSite">
+      <soap:operation soapAction="http://tempuri.org/GetVendorsDataByVendorsIDAndSite" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:binding name="OAServiceSoap12" type="tns:OAServiceSoap">
+    <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
+    <wsdl:operation name="CheckDomainUserLogin">
+      <soap12:operation soapAction="http://tempuri.org/CheckDomainUserLogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDomainUserNameLogin">
+      <soap12:operation soapAction="http://tempuri.org/CheckDomainUserNameLogin" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesID">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeesDataByEmployeesID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeesDataByEmployeesIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeesDataByEmployeesIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeID">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeeDataByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByEmployeeIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeeDataByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeeDataByCardNoAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeeDataByCardNoAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeID">
+      <soap12:operation soapAction="http://tempuri.org/GetChineseNameByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetChineseNameByEmployeeIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetChineseNameByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExists">
+      <soap12:operation soapAction="http://tempuri.org/CheckEmployeeIDIsExists" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckEmployeeIDIsExistsBySite">
+      <soap12:operation soapAction="http://tempuri.org/CheckEmployeeIDIsExistsBySite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeID">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentCodeByEmployeeID" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentCodeByEmployeeIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentCodeByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByEmployeesId">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentDataByEmployeesId" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureByEmployeeIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeePictureByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetEmployeePictureObjectByEmployeeIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetEmployeePictureObjectByEmployeeIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCode">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentDataByDepartmentCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentDataByDepartmentCodeAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentDataByDepartmentCodeAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCode">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentNameByDepartmentCode" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetDepartmentNameByDepartmentCodeAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetDepartmentNameByDepartmentCodeAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExists">
+      <soap12:operation soapAction="http://tempuri.org/CheckDepartmentCodeIsExists" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="CheckDepartmentCodeIsExistsBySite">
+      <soap12:operation soapAction="http://tempuri.org/CheckDepartmentCodeIsExistsBySite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorDataByCardNoAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetVendorDataByCardNoAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetVendorsDataByVendorsIDAndSite">
+      <soap12:operation soapAction="http://tempuri.org/GetVendorsDataByVendorsIDAndSite" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="OAService">
+    <wsdl:port name="OAServiceSoap" binding="tns:OAServiceSoap">
+      <soap:address location="http://172.16.2.27/OAMS/WS/OAService.asmx" />
+    </wsdl:port>
+    <wsdl:port name="OAServiceSoap12" binding="tns:OAServiceSoap12">
+      <soap12:address location="http://172.16.2.27/OAMS/WS/OAService.asmx" />
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

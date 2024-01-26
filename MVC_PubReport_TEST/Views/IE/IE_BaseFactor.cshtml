@@ -1,0 +1,164 @@
+﻿@{
+    ViewBag.Title = "定义Base&Factor";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+   
+}
+@using MVC_PubReport.Models.IE
+@model IEnumerable<TIE_BaseFactor> 
+@{  
+    
+        
+       var request =   HttpContext.Current.Request;
+       var requestScheme= request.Url.Scheme;
+       var requestAuth= request.Url.Authority;
+       var path = HttpRuntime.AppDomainAppVirtualPath;
+       var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+      
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+
+<script src="~/Scripts/Pub_Report_IE_BaseFactor.js"></script>  
+<h5>@*<a href="@baseUrl" >首页</a>*@>>IE资料维护>>定义Factor</h5>
+ 
+
+<form class="form-inline" role="form" id ="IE_ModelStageForm">
+    <div @*class="row "*@ style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> IE_BaseFactor</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS" id="EditModel">
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <label for="Mode">Mode:&nbsp;</label>
+                                @if (ViewData["modeListItem"] != null)
+                                { 
+                                    @Html.DropDownList("Mode", ViewData["modeListItem"] as SelectList, "--Please Select--", new { @id = "Mode",@class="form-control" })
+                                } 
+                            </div>
+                            <div class="col-md-6 ">
+                                <label for="Section">Section:&nbsp;&nbsp;</label>
+                                <select name="Section" id ="Section" class="form-control">
+                                    <option value="">--Please Select--</option>
+                                    <option value="Input">Input</option>
+                                    <option value="Output">Output</option>
+                                </select>
+                            </div>
+                                                  
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <label for="Line">Line:&nbsp;&nbsp;&nbsp;</label>
+                                <input type="text" id="Line" class="form-control"/>
+                            </div> 
+                            <div class="col-md-6 ">
+                                <label for="Stage">Stage:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <select id="Stage" name="Stage" class="form-control">
+                                    <option value="">--Please Select--</option>
+                                </select>
+                            </div> 
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 ">
+                                <label for="Base">Base:&nbsp;&nbsp;&nbsp;</label>
+                                <input type="text" id="Base" class="form-control"/>
+                            </div> 
+                            <div class="col-md-6 ">
+                                <label for="Factor">Factor:&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <input type="text" id="Factor" class="form-control"/>
+                            </div> 
+                        </div>
+                        <div class="row">
+                             <div class="col-md-6 ">
+                                <label for="CountTimes">Times:&nbsp;</label>
+                                <input type="text" id="CountTimes" class="form-control"/>
+                            </div>
+                        </div>
+     
+                        <div class="row">
+                            <div class="col-md-2 ">
+                               
+                            </div> 
+                            <div class="col-md-4 ">
+                                <input type="button" value=" 重&nbsp;&nbsp;&nbsp;&nbsp; 置 " class="btn btn-primary btn-sm" id="reset" />
+                            </div>   
+                            <div class="col-md-6 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                  @*  <div class="col-md-5 divCSS">
+                        <div class="row">
+                             <span style="color: Red">(以Excel方式上传.<a href="~/FileDL/DLFile?fileName=IE_ModelStage_Temp.xlsx"
+                                class="btlink"  style="color:#00059B">模板下载，</a>请不要更改模板列名，Sheet名)</span>
+                        </div>
+                        <div class="row">
+                            <input type="file" id="UploadExcelFilePath" name="UploadExcelFilePath"  />
+                            <input type="button" value="Excel资料上传" class="btn btn-primary btn-sm" id="UploadExcel"  />
+                        </div>
+                        <div class="row col-md-9 ">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60"
+                                    aria-valuemin="0" aria-valuemax="100" style="" id="prog_in">
+                                    <span class="sr-only">40% 完成</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span> IE_BaseFactor详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete" >  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 
+
+
+
+
+
+

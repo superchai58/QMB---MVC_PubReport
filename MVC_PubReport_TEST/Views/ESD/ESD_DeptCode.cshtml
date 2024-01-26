@@ -1,0 +1,466 @@
+﻿@{
+    ViewBag.Title = "ESD_DeptCode";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    Layout = null;
+}
+ 
+@{     
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+   
+    //var baseUrl = string.Format("{0}://{1}", HttpContext.Current.Request.Url.Scheme, HttpContext.Current.Request.Url.Authority);
+    
+}
+ 
+<script>
+    $(document).ready(function () {
+        var $ddBU = $('#BU');
+        var $ddType = $('#Type');
+        var $txtDeptCode = $('#DeptCode');
+        var $txtDepartment = $('#Department');
+
+        var $btnRest = $('#rest');
+        var $btnSave = $('#save');
+        var $btnToExcel = $('#ToExcel');
+        var $btnDelete = $('#delete');
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+        var $tbResultTable = $('#ResultTable');
+        var $ModalDoing = $('#doing');
+
+        $btnRest.click(function () {
+            $ddBU.val("");
+            $ddType.val("");
+            $txtDeptCode.val("");
+            $txtDepartment.val("");
+            DisableBtns();
+            $tbResultTable.bootstrapTable('removeAll');
+        });
+
+        $btnSave.click(function () {
+            var BU, Type, DeptCode, Department;
+
+            BU = $ddBU.val();
+            Type = $ddType.val();
+            DeptCode = $txtDeptCode.val().trim();
+            Department = $txtDepartment.val().trim();
+
+            var Msg = "";
+            if (BU == "")
+            {
+                Msg = Msg + "[BU]不能为空 || ";
+            }
+            if (Type == "") {
+                Msg = Msg + "[Type]不能为空 || ";
+            }
+            if (DeptCode == "") {
+                Msg = Msg + "[DeptCode]不能为空 || ";
+            }
+            if (Department == "") {
+                Msg = Msg + "[部门]不能为空 || ";
+            }
+
+
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+
+            var url = baseUrl + "/ESD/ESD_DeptCode_Save";
+            jsonData = { "BU": BU, "Type": Type, "DeptCode": DeptCode, "Department": Department };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+        });
+        
+        $btnToExcel.click(function () {
+
+            $tbResultTable.tableExport({
+                type: 'excel',
+                escape: 'false',
+                fileName: 'ESD_DeptCode',
+                tableName: 'ESD_DeptCode',
+                ignoreColumn: [0],
+                worksheetName: ['ESD_DeptCode']
+            })
+        });
+
+        $btnDelete.click(function () {
+            var BU, Type;
+
+            BU = $ddBU.val();
+            Type = $ddType.val();
+            var Msg = "";
+            if (BU == "") {
+                Msg = Msg + "[BU]不能为空 || ";
+            }
+            if (Type == "") {
+                Msg = Msg + "[Type]不能为空 || ";
+            }
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+
+            var selectRows = $tbResultTable.bootstrapTable('getSelections');
+
+            //console.log(selectRows);
+            if (selectRows.length == 0) {
+
+                //$lblMessageError.html("请选择要删除的记录！");
+                //$lblMessageSuccess.html("");
+                ErrorMsg("请选择要删除的记录！");
+                return;
+            }
+            var msg = "您确定要删除吗？"
+            if (confirm(msg) == true) {
+                $ModalDoing.modal('show').css({
+                    width: 'auto',
+                    'margin-left': function () {
+                        return ($(this).width() / 10);
+                    },
+                    'margin-top': function () {
+                        return ($(this).height() / 2);
+                    },
+
+                });
+                var url = baseUrl + "/ESD/ESD_DeptCode_Delete";
+                jsonData = { "jsonData": JSON.stringify(selectRows), "BU": BU, "Type": Type };
+                ajaxJsonRequestDerived(url, 'post', jsonData, ESD_DeptCode_Delete, AjaxFailResult);
+            }
+
+
+
+        });
+        function ESD_DeptCode_Delete(data) {
+            if (data.result != "OK") {
+
+                ErrorMsg(data.result);
+
+                $ModalDoing.modal('hide');
+
+
+            } else {
+                //移除选中的行
+                var ids = $.map($tbResultTable.bootstrapTable('getSelections'), function (row) {
+                    return row.ID;
+                });
+                $tbResultTable.bootstrapTable('remove', {
+                    field: 'ID',
+                    values: ids
+                });
+                //$lblMessageError.html("");
+                //$lblMessageSuccess.html("(" + ids.length + ")行资料已删除");
+                OKMsg("(" + ids.length + ")行资料已删除");
+                $ModalDoing.modal('hide');
+            }
+        }
+
+
+
+        $ddBU.change(function () {
+            $ddType.val("");
+            DisableBtns();
+            $tbResultTable.bootstrapTable('removeAll');
+        });
+        $ddType.change(function () {
+
+            var BU, Type;
+
+            BU = $ddBU.val();
+            Type = $ddType.val();
+
+            var Msg = "";
+            if (BU == "") {
+                Msg = Msg + "[BU]不能为空 || ";
+            }
+            if (Type == "") {
+                Msg = Msg + "[Type]不能为空 || ";
+            }
+
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                DisableBtns();
+                return;
+            }
+            EnableBtns();
+            var url = baseUrl + "/ESD/ESD_DeptCode_View";
+            jsonData = { "BU": BU, "Type": Type };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+
+        });
+
+        $txtDeptCode.blur(function () {
+
+            var BU, Type, DeptCode;
+
+            BU = $ddBU.val();
+            Type = $ddType.val();
+            DeptCode = $txtDeptCode.val().trim();
+            var Msg = "";
+            if (BU == "") {
+                Msg = Msg + "[BU]不能为空 || ";
+            }
+            if (Type == "") {
+                Msg = Msg + "[Type]不能为空 || ";
+            }
+            if (DeptCode == "") {
+                Msg = Msg + "[DeptCode]不能为空 || ";
+            } 
+
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                DisableBtns();
+                return;
+            }
+            EnableBtns();
+            var url = baseUrl + "/ESD/ESD_DeptCode_GetDepartment";
+            jsonData = { "BU": BU, "Type": Type, "DeptCode": DeptCode };
+            ajaxJsonRequestDerived(url, 'post', jsonData, ESD_DeptCode_GetDepartment, AjaxFailResult);
+        });
+        
+        function ESD_DeptCode_GetDepartment(data)
+        {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                DisableBtns();
+            } else {
+                
+                OKMsg("");
+                $txtDepartment.val(data.tableData[0]);
+                EnableBtns();
+                
+            }
+        }
+        function Show_Data(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                DisableBtns();
+            } else {
+                $tbResultTable.bootstrapTable('load', data.tableData);
+                var dataLen = data.tableData.length;
+                EnableBtns();
+                OKMsg("一共(" + dataLen + ")行");
+            }
+        }
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href="' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350  > 请重新登录 </a>')
+
+
+                    tb_init('a.thickbox, area.thickbox, input.thickbox');
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+        function DisableBtns() {
+            $btnSave.attr("disabled", "disabled");
+            $btnDelete.attr("disabled", "disabled");
+            $btnToExcel.attr("disabled", "disabled");
+      
+        }
+        function EnableBtns() {
+            $btnSave.val("添加/更新");
+            $btnSave.attr("disabled", false);
+
+
+            $btnDelete.val("删除");
+            $btnDelete.attr("disabled", false);
+
+
+            $btnToExcel.val("导出数据Excel");
+            $btnToExcel.attr("disabled", false);
+
+ 
+
+        }
+        //初始化table end
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式 
+            clickToSelect: true,
+            search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            columns: [
+                 {
+                     field: 'Checked',
+                     title: '删除<br />',
+                     checkbox: true,
+                     formatter: function (value, row, index) {
+                         if (row.state == true)
+                             return {
+                                 disable: true,
+                                 checked: true
+
+                             };
+                         return value;
+                     }
+                 },
+
+                {
+                    //field: 'Item',
+                    title: 'Item<br />',
+
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'ID',
+                    align: 'center',
+                    title: 'ID',
+                    visible: false,
+                } , {
+                    field: 'DeptCode',
+                    title: 'DeptCode',
+
+
+                }, {
+                    field: 'Department',
+                    title: '部门',
+                }, {
+                    field: 'TransID',
+                    title: '操作人',
+                }, {
+                    field: 'TransDateTime',
+                    title: '操作时间',
+                }],
+
+            onClickRow: function (row, $element) {
+
+                $txtDeptCode.val(row.DeptCode);
+                $txtDepartment.val(row.Department); 
+            },
+        });
+    }) 
+</script>  
+<h5><a href="@baseUrl" >首页</a>>>ESD>>维护基本信息>>维护部门</h5>
+ 
+
+<form class="form-inline" role="form">
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> ESD_DeptCode</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-12 divCSS" id="EditModel">  
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <label >BU:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <select id="BU" class="form-control">
+                                        <option value="">--Please Select--</option>
+                                        <option value="PU3">PU3</option>
+                                        <option value="PU3-TB">PU3-TB</option>
+                                        <option value="PU4">PU4</option>
+                                        <option value="PU5">PU5</option>
+                                        <option value="JON">JON</option>
+                                        <option value="EPAD">EPAD</option>
+                                        <option value="P1">P1</option>
+                                        <option value="CQZY">CQZY</option>                                        
+                                    </select>
+                                </label>
+                            </div> 
+                            <div class="col-md-3 ">
+                                <label>Type: 
+                                    <select id="Type" class="form-control">
+                                        <option value="">--Please Select--</option>
+                                        <option value="FA">FA</option>
+                                        <option value="SMT">SMT</option>
+                                    </select>
+                                </label>
+                            </div> 
+                          </div>
+                        <div class="row">
+                             <div class="col-md-4 ">
+                                <label>DeptCode:
+                                    <input type="text" id="DeptCode" class="form-control" />
+                                </label>
+                            </div> 
+                            
+                            <div class="col-md-8">
+                                <label>部门:
+                                    <input type="text" id="Department" disabled="disabled"  />
+                                </label>
+                            </div>  
+                        </div> 
+                         
+                        <div class="row">
+                            <div class="col-md-3 ">
+                                 
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save" disabled="disabled"/>
+                            </div>  
+                        </div>
+                    </div>
+ 
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span> ESD_DeptCode详细信息</h3>
+        </div>
+        <div class="panel-body">
+              <div id="toolbar" class="toolbar">  
+                <div class="btn-group">  
+                    <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel" disabled="disabled" >  
+                        <i class="glyphicon glyphicon-arrow-down"></i>  
+                    </button>  
+                    <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  disabled="disabled">  
+                        <i class="glyphicon glyphicon-trash"></i>  
+                    </button>  
+                </div>  
+            </div> 
+            <table class="table table-hover"  id="ResultTable"  >
+ 
+            </table>
+        </div>
+    </div>
+</form>
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 
+
+
+
+
+
+

@@ -1,0 +1,497 @@
+﻿@{
+    ViewBag.Title = "QIMS_DutyInfo";
+    var htmlAttribute = ViewData["Dictionary"] as IDictionary<string, object>;
+    var request = HttpContext.Current.Request;
+    var requestScheme = request.Url.Scheme;
+    var requestAuth = request.Url.Authority;
+    var path = HttpRuntime.AppDomainAppVirtualPath;
+    var baseUrl = string.Format("{0}://{1}{2}", requestScheme, requestAuth, path);
+
+    var QueryStr = request.Url.Query;
+    if (QueryStr == null || QueryStr == "")
+    {
+        Layout = null;
+    }
+   
+}
+ 
+ 
+ 
+<script>
+    $(document).ready(function () {
+
+
+        var $btnRest = $('#rest');
+        var $btnSave = $('#save');
+        var $btnToExcel = $('#ToExcel');
+        var $btnDelete = $('#delete');
+        var $btnQuery = $('#Query');
+        var $lblMessageError = $('#message-error');
+        var $lblMessageSuccess = $('#message-success');
+        var $UserLogin = $('#UserLogin');
+        var $UserLogOut = $('#UserLogOut');
+        var $tbResultTable = $('#ResultTable');
+        var $ModalDoing = $('#doing');
+
+        var $txtLine = $('#Line');
+        var $ddShift = $('#Shift');
+        var $ddType = $('#Type');
+        var $txtEmployeeID = $('#EmployeeID');
+        var $txtEmployeeName = $('#EmployeeName');
+        var $txtDutyPhone = $('#DutyPhone');
+ 
+        var $txtFilePath = $('#UploadExcelFilePath');
+        var $btnUploadExcel = $('#UploadExcel');
+        var $prog_in = $('#prog_in');
+
+        $btnRest.click(function () {
+            $txtLine.val("");
+            $ddType.val("");
+            $ddShift.val("");
+            $txtEmployeeID.val("");
+            $txtEmployeeName.val("");
+            $txtDutyPhone.val("");
+            $tbResultTable.bootstrapTable('removeAll');
+        });
+
+
+
+        $btnToExcel.click(function () {
+            $tbResultTable.tableExport({
+                type: 'excel',
+                escape: 'false',
+                fileName: 'QIMS_DutyInfo',
+                tableName: 'QIMS_DutyInfo',
+                ignoreColumn: [0],
+                worksheetName: ['QIMS_DutyInfo']
+            })
+        });
+
+        $txtLine.blur(function () {
+
+            Query();
+        });
+        $btnQuery.click(function () {
+            Query();
+        });
+        function Query() {
+            var Line,Shift;
+            Line = $txtLine.val().trim();
+            Shift = $ddShift.val().trim();
+            var Msg = "";
+            if (Line == "") {
+                Msg = Msg + "[Line] 不能为空 || ";
+            }
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+            var url = baseUrl + "/SF/QIMS_DutyInfo_View";
+            jsonData = { "Line": Line, "Shift": Shift };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+        }
+   
+        $btnSave.click(function () {
+            var Line, Type, Shift, EmployeeID, DutyName, DutyPhone;
+            var Msg = "";
+            Line = $txtLine.val();
+            Type = $ddType.val();
+            Shift = $ddShift.val();
+            EmployeeID = $txtEmployeeID.val();
+            DutyName = $txtEmployeeName.val();
+            DutyPhone = $txtDutyPhone.val();
+
+            if (Line == "") {
+                Msg = Msg + "[Line] 不能为空 || ";
+            }
+            if (Type == "") {
+                Msg = Msg + "[Type] 不能为空 || ";
+            }
+            if (Shift == "") {
+                Msg = Msg + "[Shift] 不能为空 || ";
+            }
+            if (EmployeeID == "") {
+                Msg = Msg + "[工号] 不能为空 || ";
+            }
+            if (DutyName == "") {
+                Msg = Msg + "[姓名] 不能为空 || ";
+            }
+            if (DutyPhone == "") {
+                Msg = Msg + "[电话] 不能为空 || ";
+            }
+            if (Msg != "") {
+                ErrorMsg(Msg);
+                return;
+            }
+            var url = baseUrl + "/SF/QIMS_DutyInfo_View_InsertUpdate";
+            jsonData = { "Line": Line, "Shift": Shift, "type": Type, "EmployeeID": EmployeeID, "DutyName": DutyName, "DutyPhone": DutyPhone };
+            ajaxJsonRequestDerived(url, 'post', jsonData, Show_Data, AjaxFailResult);
+        });
+
+       
+        $btnDelete.click(function () {
+            var selectRows = $tbResultTable.bootstrapTable('getSelections');
+
+            //console.log(selectRows);
+            if (selectRows.length == 0) {
+
+                //$lblMessageError.html("请选择要删除的记录！");
+                //$lblMessageSuccess.html("");
+                ErrorMsg("请选择要删除的记录！");
+                return;
+            }
+            var msg = "您确定要删除吗？"
+            if (confirm(msg) == true) {
+                $ModalDoing.modal('show').css({
+                    width: 'auto',
+                    'margin-left': function () {
+                        return ($(this).width() / 10);
+                    },
+                    'margin-top': function () {
+                        return ($(this).height() / 2);
+                    },
+
+                });
+                var url = baseUrl + "/SF/QIMS_DutyInfo_Delete";
+                jsonData = { "jsonData": JSON.stringify(selectRows) };
+                ajaxJsonRequestDerived(url, 'post', jsonData, QIMS_DutyInfo_DeleteData, AjaxFailResult);
+            } 
+        });
+        function QIMS_DutyInfo_DeleteData(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                $ModalDoing.modal('hide');
+
+
+            } else {
+                //移除选中的行
+                var ids = $.map($tbResultTable.bootstrapTable('getSelections'), function (row) {
+                    return row.ID;
+                });
+                $tbResultTable.bootstrapTable('remove', {
+                    field: 'ID',
+                    values: ids
+                });
+                //$lblMessageError.html("");
+                //$lblMessageSuccess.html("(" + ids.length + ")行资料已删除");
+                OKMsg("(" + ids.length + ")行资料已删除");
+                $ModalDoing.modal('hide');
+            }
+        }
+
+
+
+
+        var sitv, uploadOK
+        $btnUploadExcel.click(function () {
+            var name = $txtFilePath.val();
+            var formaData = new FormData();
+
+            uploadOK = 0;
+            formaData.append("file", $txtFilePath[0].files[0])
+            formaData.append("name", name);
+            if (name == "" || name == undefined) {
+                ErrorMsg("请选择需要上传的Excel文件");
+                return;
+            }
+            $btnUploadExcel.val("资料正在上传...");
+            DisableBtns();
+            sitv = setInterval(function () {
+                var prog_url = baseUrl + "/SF/ProcessGetStatus";
+                $.getJSON(prog_url, function (res) {
+                    //$('#prog_in').width(res + '%');
+
+                    //alert(res.tableData);
+                    if (uploadOK == 1) {
+                        $prog_in.css("width", '100%')
+                    }
+                    else {
+                        $prog_in.css("width", res.tableData + '%')
+                    }
+                }
+                    , 6000);
+            });
+
+            var url = baseUrl + "/SF/QIMS_DutyInfo_UploadExcel";
+            ajaxJsonRequestFile(url, 'post', formaData, UploadSuceess, AjaxFailResult);
+
+
+        });
+        function UploadSuceess(data) {
+            if (data.result != "OK") {
+
+                ErrorMsg(data.result);
+                clearInterval(sitv);
+                uploadOK = 0;
+                $prog_in.css("width", '0%')
+                EnableBtns();
+                return;
+
+            } else {
+                clearInterval(sitv);
+                uploadOK = 1;
+                $prog_in.css("width", '100%')
+                EnableBtns();
+                OKMsg("资料上传完成");
+                var UploadFailQty = data.tableData.length;
+                if (UploadFailQty > 0) {
+                    ErrorMsg("(" + UploadFailQty + ")行资料上传失败");
+                    $tbResultTable.bootstrapTable('load', data.tableData);
+                }
+
+                return;
+            }
+
+        }
+        function Show_Data(data) {
+            if (data.result != "OK") {
+                ErrorMsg(data.result);
+                DisableBtns();
+            } else {
+                $tbResultTable.bootstrapTable('load', data.tableData);
+                var dataLen = data.tableData.length;
+                EnableBtns();
+                OKMsg("一共(" + dataLen + ")行 操作成功");
+            }
+        }
+        function OKMsg(msg) {
+            $lblMessageError.html("");
+            $lblMessageSuccess.html(msg);
+        }
+        function ErrorMsg(msg) {
+            if (msg == "用户登录已失效，请重新登录后操作") {
+                //location.reload();
+                if ($UserLogin.length != 0) {
+                    $UserLogOut.html("");
+                    $UserLogin.html("");
+                    $UserLogin.html('<a class="thickbox" title="登录PUB Report"  href="' + baseUrl + '/User/Login?keepThis=True&TB_iframe=True&height=430&width=350  > 请重新登录 </a>')
+
+
+                    tb_init('a.thickbox, area.thickbox, input.thickbox');
+                    imgLoader = new Image();// preload image
+                    imgLoader.src = tb_pathToImage;
+                }
+
+            }
+            $lblMessageError.html(msg);
+            $lblMessageSuccess.html("");
+        }
+        function DisableBtns() {
+            $btnSave.attr("disabled", "disabled");
+            $btnDelete.attr("disabled", "disabled");
+            $btnToExcel.attr("disabled", "disabled");
+            $btnQuery.attr("disabled", "disabled");
+
+        }
+        function EnableBtns() {
+            $btnSave.val("添加/更新");
+            $btnSave.attr("disabled", false);
+
+
+            $btnDelete.val("删除");
+            $btnDelete.attr("disabled", false);
+
+
+            $btnToExcel.val("导出数据Excel");
+            $btnToExcel.attr("disabled", false);
+            $btnQuery.attr("disabled", false);
+
+            $btnUploadExcel.val("Excel资料上传");
+            $btnUploadExcel.attr("disabled", false);
+
+        }
+        //初始化table end
+        $tbResultTable.bootstrapTable({
+            editable: true, //开启编辑模式 
+            clickToSelect: true,
+            search: true,
+            datatype: "json",
+            toolbar: '#toolbar',//工具按钮用哪个容器
+            striped: true,                      //是否显示行间隔色
+            columns: [
+                 {
+                     field: 'Checked',
+                     title: '删除<br />',
+                     checkbox: true,
+                     formatter: function (value, row, index) {
+                         if (row.state == true)
+                             return {
+                                 disable: true,
+                                 checked: true
+
+                             };
+                         return value;
+                     }
+                 },
+
+                {
+                    //field: 'Item',
+                    title: 'Item<br />',
+
+                    formatter: function (value, row, index)
+                    { return index + 1 }
+                }, {
+                    field: 'ID',
+                    align: 'center',
+                    title: 'ID',
+                    visible: false,
+                }, {
+                    field: 'Line',
+                    title: '线别',
+                }, {
+                    field: 'Type',
+                    title: 'Type',
+                }, {
+                    field: 'Shift',
+                    title: '班别',
+                }, {
+                    field: 'EmployeeID',
+                    title: '工号',
+                }, {
+                    field: 'DutyName',
+                    title: '姓名',
+                } , {
+                    field: 'DutyPhone',
+                    title: '联系电话',
+                } ]
+
+        });
+    })
+</script>  
+<h5><a href="@baseUrl" >首页</a>>>SF>>QFactory>>QIMS_DutyInfo(组长信息)</h5>
+ 
+
+@*<form class="form-inline" role="form">*@
+    <div  style="margin-left:40%">
+        <label id="message-error" class="message-error"></label>
+        <label id="message-success" class="message-success"></label>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            <h3 class="panel-title"> <span class="glyphicon glyphicon-th-list"> </span> QIMS_DutyInfo</h3>
+        </div>
+        <div class="panel-body"> 
+            <div class="container">                
+                <div class="row">
+                    <div class="col-md-6 divCSS" id="EditModel">  
+                        <div class="row">
+                            <div class="col-md-3 ">
+                                <label>Line:<input type="text" class="form-control" id="Line"  />
+                                </label> 
+                            </div> 
+                             <div class="col-md-3">
+                                <label>Type: 
+                                    <select id ="Type" class="form-control">
+                                        <option value="">--Select--</option>
+                                        <option value="SMT">SMT</option>
+                                        <option value="FA">FA</option>                                        
+                                    </select>
+                                </label> 
+                            </div> 
+                              <div class="col-md-3 ">
+                                <label>Shift: 
+                                    <select id ="Shift" class="form-control">
+                                        <option value="">--Select--</option>
+                                        <option value="D">白班</option>
+                                        <option value="N">夜班</option>                                        
+                                    </select>
+                                </label> 
+                            </div>                             
+                         </div>
+        
+                         <div class="row">                          
+                            <div class="col-md-3">
+                                <label>工号:<input type="text" class="form-control" id="EmployeeID"  />
+                                </label> 
+                            </div>  
+                             <div class="col-md-3">
+                                 <label>姓名:<input type="text" class="form-control" id="EmployeeName"  />
+                                </label> 
+                            </div>  
+                           <div class="col-md-3 ">
+                                <label>电话:<input type="text" class="form-control" id="DutyPhone"  />
+                                </label> 
+                            </div>                 
+                         </div> 
+                        <div class="row">
+                            <div class="col-md-1 ">
+                                 
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="重置" class="btn btn-primary btn-sm" id="rest"  />
+                            </div> 
+                             <div class="col-md-2 ">
+                                 <input type="button" value="查询" class="btn btn-primary btn-sm" id="Query"  />
+                            </div> 
+                            <div class="col-md-2 ">
+                                 <input type="button" value="添加/更新" class="btn btn-primary btn-sm" id="save"  />
+                            </div>  
+                        </div>
+                    </div>
+                    <div class="col-md-1"></div>
+                     <div class="col-md-5 divCSS">
+                        <div class="row">
+                             <span style="color: Red">(以Excel方式上传.<a href="~/FileDL/DLFile?fileName=QIMS_DutyInfo_Temp.xlsx"
+                                class="btlink"  style="color:#00059B">模板下载，</a>请不要更改模板列名，Sheet名)
+                             </span>
+                        </div>
+                        <div class="row">
+                            <input type="file" id="UploadExcelFilePath" name="UploadExcelFilePath" />
+                            <input type="button" value="Excel资料上传" class="btn btn-primary btn-sm" id="UploadExcel"  />
+                        </div>
+                        <div class="row col-md-9 ">
+                            <div class="progress">
+                                <div class="progress-bar" role="progressbar" aria-valuenow="60"
+                                    aria-valuemin="0" aria-valuemax="100" style="" id="prog_in">
+                                    <span class="sr-only">40% 完成</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </div>
+   
+    <div class="panel panel-info">
+            <div class="panel-heading">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-filter"> </span>QIMS_DutyInfo详细信息</h3>
+            </div>
+            <div class="panel-body">
+                    <div id="toolbar" class="toolbar">  
+                        <div class="btn-group">  
+                            <button type="button" class="btn btn-default" data-toggle="tooltip"  id="ToExcel"  data-placement="top" title="下载数据到Excel"  >  
+                                <i class="glyphicon glyphicon-arrow-down"></i>  
+                            </button>  
+                            <button type="button"  class="btn btn-default" data-toggle="tooltip"  data-placement="top" title="删除所选资料" id="delete"  >  
+                                <i class="glyphicon glyphicon-trash"></i>  
+                            </button>  
+                        </div>  
+                    </div> 
+                    <table class="table table-hover"  id="ResultTable"  >
+ 
+                    </table>
+            </div>
+    </div>
+ 
+<div class="modal fade" id="doing" tabindex="-1" role="dialog" data-backdrop="static" >  
+            <div class="modal-dialog" role="alertdialog">  
+                
+                <div class="modal-content">  
+                    <div class="modal-header">  
+                        <h3>数据正提交后台处理，请耐心等待</h3>  
+                    </div>  
+                    <div class="modal-body">  
+                        <img src="~/CSS/Images/doing.gif" style="margin-left:40%" />
+                    </div>
+                </div>
+            </div>
+   </div>
+
+ 
+
+
+
+
+
+
